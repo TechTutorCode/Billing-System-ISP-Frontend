@@ -46,12 +46,19 @@ jobs:
           command: |
             sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@37.60.242.201 bash -c "
               set -e
+              
+              # Create apps directory if it doesn't exist
+              mkdir -p ~/apps/Billing-System-Frontend
               cd ~/apps/Billing-System-Frontend
+              
+              # If it's a git repo, pull latest changes
+              if [ -d .git ]; then
+                git pull origin main
+              fi
 
               # Write environment variables
               echo 'VITE_API_URL=\"$VITE_API_URL\"' > .env
 
-              git pull origin main
               docker compose down
               docker compose up --build -d
             "
