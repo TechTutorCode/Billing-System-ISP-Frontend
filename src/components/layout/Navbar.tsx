@@ -1,7 +1,6 @@
 import { Bell, Search, Menu, User } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useState } from 'react';
-import { cn } from '../../utils/cn';
 
 interface NavbarProps {
   onMenuClick?: () => void;

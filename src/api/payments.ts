@@ -1,9 +1,8 @@
-import apiClient from './client';
 import { Payment, PaymentCreate } from './types';
 
 // Mock API - Replace with actual endpoints when backend is ready
 export const paymentsApi = {
-  list: async (subscriptionId?: string): Promise<Payment[]> => {
+  list: async (): Promise<Payment[]> => {
     // TODO: Replace with actual API call when backend is ready
     // const response = await apiClient.get<Payment[]>('/api/payments', { params: { subscription_id: subscriptionId } });
     // return response.data;
