@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentsApi } from '../../api/payments';
 import { subscriptionsApi } from '../../api/subscriptions';
-import { Payment, PaymentCreate } from '../../api/types';
+import { PaymentCreate } from '../../api/types';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';

@@ -4,7 +4,7 @@ import { subscriptionsApi } from '../../api/subscriptions';
 import { customersApi } from '../../api/customers';
 import { routersApi } from '../../api/routers';
 import { packagesApi } from '../../api/packages';
-import { Subscription, SubscriptionCreate } from '../../api/types';
+import { SubscriptionCreate } from '../../api/types';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Play, Pause, Square } from 'lucide-react';
+import { Plus, Play, Pause } from 'lucide-react';
 import { Card, CardContent } from '../../components/ui/card';
 
 export const Subscriptions = () => {

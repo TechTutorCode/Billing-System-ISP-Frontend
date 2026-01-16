@@ -1,4 +1,3 @@
-import apiClient from './client';
 import { DashboardStats, RevenueData, SubscriptionStatusData } from './types';
 
 // Mock API - Replace with actual endpoints when backend is ready
