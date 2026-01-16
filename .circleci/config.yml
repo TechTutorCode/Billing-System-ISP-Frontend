@@ -1,14 +1,18 @@
 version: 2.1
 
 executors:
-  docker-executor:
+  node-executor:
     docker:
       - image: cimg/node:20.0  # Node.js for building React app
+    working_directory: ~/repo
+  deploy-executor:
+    docker:
+      - image: cimg/python:3.12  # Same as API for SSH deployment
     working_directory: ~/repo
 
 jobs:
   build:
-    executor: docker-executor
+    executor: node-executor
     steps:
       - checkout
 
@@ -27,7 +31,7 @@ jobs:
             docker build -t billing-system-frontend .
 
   deploy:
-    executor: docker-executor
+    executor: deploy-executor
     steps:
       - checkout
 
