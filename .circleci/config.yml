@@ -46,7 +46,7 @@ jobs:
           command: |
             sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@37.60.242.201 bash -c "
               set -e
-              cd ~/apps/Billing-System-Frontend
+              cd ~/apps/Billing-System-ISP-Frontend
 
               # Write environment variables
               echo 'VITE_API_URL=\"$VITE_API_URL\"' > .env
