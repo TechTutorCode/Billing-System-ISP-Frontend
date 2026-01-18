@@ -98,7 +98,7 @@ export const Routers = () => {
                       {(() => {
                         const lastSeen = lastSeenMap.get(router.id);
                         return lastSeen
-                          ? new Date(lastSeen).toLocaleString()
+                          ? new Date(lastSeen).toLocaleString('en-US', { hour12: true })
                           : '-';
                       })()}
                     </TableCell>
@@ -154,7 +154,7 @@ export const Routers = () => {
                 {statusHistory.map((record) => (
                   <TableRow key={record.id}>
                     <TableCell>
-                      {new Date(record.recorded_at).toLocaleString()}
+                      {new Date(record.recorded_at).toLocaleString('en-US', { hour12: true })}
                     </TableCell>
                     <TableCell>
                       <Badge variant={record.status === 'online' ? 'default' : 'secondary'}>
@@ -170,12 +170,12 @@ export const Routers = () => {
                     </TableCell>
                     <TableCell>
                       {record.connected_since
-                        ? new Date(record.connected_since).toLocaleString()
+                        ? new Date(record.connected_since).toLocaleString('en-US', { hour12: true })
                         : '-'}
                     </TableCell>
                     <TableCell>
                       {record.last_seen
-                        ? new Date(record.last_seen).toLocaleString()
+                        ? new Date(record.last_seen).toLocaleString('en-US', { hour12: true })
                         : ''}
                     </TableCell>
                   </TableRow>
