@@ -3,7 +3,7 @@ import { Package, PackageCreate, PackageUpdate, PackageType } from './types';
 
 export const packagesApi = {
   listTypes: async (): Promise<PackageType[]> => {
-    const response = await apiClient.get<PackageType[]>('/api/package-types');
+    const response = await apiClient.get<PackageType[]>('/api/packages/package-types');
     return response.data;
   },
 
