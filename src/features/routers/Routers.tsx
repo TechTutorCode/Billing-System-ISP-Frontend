@@ -151,7 +151,7 @@ export const Routers = () => {
                     <TableCell>
                       {record.last_seen
                         ? new Date(record.last_seen).toLocaleString()
-                        : '-'}
+                        : ''}
                     </TableCell>
                   </TableRow>
                 ))}
