@@ -1,6 +1,6 @@
 import { DashboardStats, RevenueData, SubscriptionStatusData } from './types';
 
-// Mock API - Replace with actual endpoints when backend is ready
+// Mock API - Replace with actual endpoints when backend is ready on
 export const dashboardApi = {
   getStats: async (): Promise<DashboardStats> => {
     // TODO: Replace with actual API call when backend is ready
