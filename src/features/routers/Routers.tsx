@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { routersApi } from '../../api/routers';
 import { Router } from '../../api/types';
 import { Button } from '../../components/ui/button';
@@ -17,6 +17,28 @@ export const Routers = () => {
     queryKey: ['routers'],
     queryFn: routersApi.list,
   });
+
+  // Fetch the most recent status history record for each router
+  const statusHistoryQueries = useQueries({
+    queries: routers.map((router) => ({
+      queryKey: ['router-status-history-latest', router.id],
+      queryFn: () => routersApi.getStatusHistory(router.id, 1),
+      enabled: routers.length > 0,
+    })),
+  });
+
+  // Create a map of router ID to most recent last_seen from status history
+  const lastSeenMap = useMemo(() => {
+    const map = new Map<string, string | null>();
+    statusHistoryQueries.forEach((query, index) => {
+      const router = routers[index];
+      if (router && query.data && query.data.length > 0) {
+        const mostRecentRecord = query.data[0]; // Most recent record (limit=1)
+        map.set(router.id, mostRecentRecord.last_seen);
+      }
+    });
+    return map;
+  }, [statusHistoryQueries, routers]);
 
   const { data: statusHistory = [], isLoading: historyLoading } = useQuery({
     queryKey: ['router-status-history', selectedRouter?.id],
@@ -73,9 +95,12 @@ export const Routers = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {router.last_seen
-                        ? new Date(router.last_seen).toLocaleString()
-                        : '-'}
+                      {(() => {
+                        const lastSeen = lastSeenMap.get(router.id);
+                        return lastSeen
+                          ? new Date(lastSeen).toLocaleString()
+                          : '-';
+                      })()}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
