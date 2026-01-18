@@ -2,7 +2,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 // Normalize API URL - remove trailing slash if present, add protocol if missing
 const getApiUrl = () => {
-  const url = import.meta.env.VITE_API_URL || 'http://37.60.242.201:8071';
+  const url = import.meta.env.VITE_API_URL || 'https://wifibill.techtutor.co.ke/api';
   // Remove trailing slash
   return url.replace(/\/$/, '');
 };
