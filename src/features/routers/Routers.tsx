@@ -1,16 +1,33 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { routersApi } from '../../api/routers';
+import { Router } from '../../api/types';
 import { Button } from '../../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
 import { Badge } from '../../components/ui/badge';
-import { Card, CardContent } from '../../components/ui/card';
-import { Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '../../components/ui/dialog';
+import { Wifi, WifiOff, RefreshCw, History } from 'lucide-react';
 
 export const Routers = () => {
+  const [selectedRouter, setSelectedRouter] = useState<Router | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
   const { data: routers = [], isLoading } = useQuery({
     queryKey: ['routers'],
     queryFn: routersApi.list,
   });
+
+  const { data: statusHistory = [], isLoading: historyLoading } = useQuery({
+    queryKey: ['router-status-history', selectedRouter?.id],
+    queryFn: () => routersApi.getStatusHistory(selectedRouter!.id),
+    enabled: !!selectedRouter && isHistoryOpen,
+  });
+
+  const handleViewHistory = (router: Router) => {
+    setSelectedRouter(router);
+    setIsHistoryOpen(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -61,9 +78,19 @@ export const Routers = () => {
                         : '-'}
                     </TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon">
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => handleViewHistory(router)}
+                          title="View History"
+                        >
+                          <History className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" title="Refresh">
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -72,6 +99,67 @@ export const Routers = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Status History Dialog */}
+      <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto" onClose={() => setIsHistoryOpen(false)}>
+          <DialogHeader>
+            <DialogTitle>
+              Status History - {selectedRouter?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {historyLoading ? (
+            <div className="p-8 text-center text-gray-400">Loading history...</div>
+          ) : statusHistory.length === 0 ? (
+            <div className="p-8 text-center text-gray-400">No history records found</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Recorded At</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>VPN IP</TableHead>
+                  <TableHead>API Port</TableHead>
+                  <TableHead>MikroTik API</TableHead>
+                  <TableHead>Connected Since</TableHead>
+                  <TableHead>Last Seen</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {statusHistory.map((record) => (
+                  <TableRow key={record.id}>
+                    <TableCell>
+                      {new Date(record.recorded_at).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={record.status === 'online' ? 'default' : 'secondary'}>
+                        {record.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{record.vpn_ip || '-'}</TableCell>
+                    <TableCell>{record.api_port}</TableCell>
+                    <TableCell>
+                      <Badge variant={record.mikrotik_api_accessible ? 'default' : 'secondary'}>
+                        {record.mikrotik_api_accessible ? 'Accessible' : 'Not Accessible'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {record.connected_since
+                        ? new Date(record.connected_since).toLocaleString()
+                        : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {record.last_seen
+                        ? new Date(record.last_seen).toLocaleString()
+                        : '-'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

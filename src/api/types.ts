@@ -150,6 +150,18 @@ export interface Router {
   created_at: string;
 }
 
+export interface RouterStatusHistory {
+  id: string;
+  router_id: string;
+  status: string;
+  vpn_ip: string | null;
+  api_port: number;
+  mikrotik_api_accessible: boolean;
+  connected_since: string | null;
+  last_seen: string | null;
+  recorded_at: string;
+}
+
 // Payment types (mock - backend not implemented yet)
 export interface Payment {
   id: string;
