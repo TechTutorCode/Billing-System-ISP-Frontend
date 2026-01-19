@@ -8,7 +8,7 @@ export const packagesApi = {
   },
 
   listByRouter: async (routerId: string): Promise<Package[]> => {
-    const response = await apiClient.get<Package[]>(`/api/routers/${routerId}/packages`);
+    const response = await apiClient.get<Package[]>(`/api/packages/routers/${routerId}/packages`);
     return response.data;
   },
 
