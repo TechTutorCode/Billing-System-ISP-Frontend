@@ -363,7 +363,7 @@ export const Routers = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingRouter} onOpenChange={(open) => !open && setEditingRouter(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Router</DialogTitle>
           </DialogHeader>
