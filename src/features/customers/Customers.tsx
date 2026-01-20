@@ -57,6 +57,7 @@ export const Customers = () => {
     mutationFn: customersApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['customers-stats'] });
       setIsCreateOpen(false);
       resetForm();
       addToast({ title: 'Success', description: 'Customer added successfully' });
@@ -75,6 +76,7 @@ export const Customers = () => {
       customersApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['customers-stats'] });
       setEditingCustomer(null);
       resetForm();
       addToast({ title: 'Success', description: 'Customer updated successfully' });
@@ -92,6 +94,7 @@ export const Customers = () => {
     mutationFn: (id: string) => customersApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['customers-stats'] });
       setTerminatingCustomer(null);
       addToast({ title: 'Success', description: 'Customer terminated successfully' });
     },
@@ -108,6 +111,7 @@ export const Customers = () => {
     mutationFn: (id: string) => customersApi.activate(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['customers-stats'] });
       addToast({ title: 'Success', description: 'Customer activated successfully' });
     },
     onError: (error: any) => {
