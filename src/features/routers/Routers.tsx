@@ -10,6 +10,24 @@ export const Routers = () => {
     queryFn: routersApi.list,
   });
 
+  // Sort routers: online first, then offline, then others
+  const sortedRouters = [...routers].sort((a, b) => {
+    // Online routers first
+    if (a.status === 'online' && b.status !== 'online') return -1;
+    if (a.status !== 'online' && b.status === 'online') return 1;
+    
+    // Offline routers second
+    if (a.status === 'offline' && b.status !== 'offline' && b.status !== 'online') return -1;
+    if (a.status !== 'offline' && a.status !== 'online' && b.status === 'offline') return 1;
+    
+    // Other statuses last (alphabetically)
+    if (a.status !== 'online' && a.status !== 'offline' && b.status !== 'online' && b.status !== 'offline') {
+      return a.status.localeCompare(b.status);
+    }
+    
+    return 0;
+  });
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -33,7 +51,7 @@ export const Routers = () => {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {routers.map((router) => (
+          {sortedRouters.map((router) => (
             <Card key={router.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
