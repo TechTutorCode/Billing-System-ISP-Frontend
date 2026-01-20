@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { packagesApi } from '../../api/packages';
 import { routersApi } from '../../api/routers';
-import { Package, PackageCreate } from '../../api/types';
+import { Package, PackageCreate, PackageUpdate } from '../../api/types';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -11,11 +11,13 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { Plus, RefreshCw, Wifi, WifiOff, Edit2, Trash2 } from 'lucide-react';
 
 export const Packages = () => {
   const [selectedRouter, setSelectedRouter] = useState<string>('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+  const [deletingPackage, setDeletingPackage] = useState<Package | null>(null);
   const [formData, setFormData] = useState<PackageCreate>({
     name: '',
     download_speed: 0,
@@ -25,6 +27,14 @@ export const Packages = () => {
     validity_unit: 'days',
     router_id: '',
     package_type_id: '',
+  });
+  const [editFormData, setEditFormData] = useState<PackageUpdate>({
+    name: '',
+    download_speed: 0,
+    upload_speed: 0,
+    price: 0,
+    validity_value: 1,
+    validity_unit: 'days',
   });
 
   const queryClient = useQueryClient();
@@ -78,6 +88,40 @@ export const Packages = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: PackageUpdate }) =>
+      packagesApi.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] });
+      setEditingPackage(null);
+      resetEditForm();
+      addToast({ title: 'Success', description: 'Package updated successfully' });
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to update package',
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: ({ id }: { id: string }) => packagesApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] });
+      setDeletingPackage(null);
+      addToast({ title: 'Success', description: 'Package deleted successfully' });
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to delete package',
+      });
+    },
+  });
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -91,6 +135,17 @@ export const Packages = () => {
     });
   };
 
+  const resetEditForm = () => {
+    setEditFormData({
+      name: '',
+      download_speed: 0,
+      upload_speed: 0,
+      price: 0,
+      validity_value: 1,
+      validity_unit: 'days',
+    });
+  };
+
   const handleCreate = () => {
     if (!formData.router_id || !formData.package_type_id || !formData.name) {
       addToast({
@@ -101,6 +156,36 @@ export const Packages = () => {
       return;
     }
     createMutation.mutate(formData);
+  };
+
+  const handleUpdate = () => {
+    if (!editingPackage || !editFormData.name) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Package name is required',
+      });
+      return;
+    }
+    updateMutation.mutate({ id: editingPackage.id, data: editFormData });
+  };
+
+  const handleDelete = () => {
+    if (!deletingPackage) return;
+    deleteMutation.mutate({ id: deletingPackage.id });
+  };
+
+  const startEdit = (pkg: Package) => {
+    setEditingPackage(pkg);
+    setEditFormData({
+      name: pkg.name,
+      download_speed: pkg.download_speed,
+      upload_speed: pkg.upload_speed,
+      price: parseFloat(pkg.price),
+      validity_value: pkg.validity_value,
+      validity_unit: pkg.validity_unit,
+      data_limit_gb: pkg.data_limit_gb || undefined,
+    });
   };
 
   const handleSync = (pkg: Package) => {
@@ -215,18 +300,38 @@ export const Packages = () => {
                     </span>
                   </div>
                 </div>
-                {!pkg.mikrotik_synced && (
+                <div className="flex gap-2">
+                  {!pkg.mikrotik_synced && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => handleSync(pkg)}
+                      disabled={syncMutation.isPending}
+                    >
+                      <RefreshCw className={`h-4 w-4 mr-2 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
+                      Sync
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full"
-                    onClick={() => handleSync(pkg)}
-                    disabled={syncMutation.isPending}
+                    className={!pkg.mikrotik_synced ? 'flex-1' : 'w-full'}
+                    onClick={() => startEdit(pkg)}
                   >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
-                    Sync to Router
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Edit
                   </Button>
-                )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={!pkg.mikrotik_synced ? 'flex-1' : 'w-full'}
+                    onClick={() => setDeletingPackage(pkg)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -334,6 +439,139 @@ export const Packages = () => {
             </Button>
             <Button onClick={handleCreate} disabled={createMutation.isPending}>
               {createMutation.isPending ? 'Creating...' : 'Create Package'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={!!editingPackage} onOpenChange={(open) => !open && setEditingPackage(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Package</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit_name">Package Name *</Label>
+              <Input
+                id="edit_name"
+                value={editFormData.name}
+                onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                placeholder="e.g., Basic Plan"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_download_speed">Download Speed (Mbps)</Label>
+                <Input
+                  id="edit_download_speed"
+                  type="number"
+                  value={editFormData.download_speed}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, download_speed: parseInt(e.target.value) || 0 })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_upload_speed">Upload Speed (Mbps)</Label>
+                <Input
+                  id="edit_upload_speed"
+                  type="number"
+                  value={editFormData.upload_speed}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, upload_speed: parseInt(e.target.value) || 0 })
+                  }
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_price">Price (KES)</Label>
+              <Input
+                id="edit_price"
+                type="number"
+                step="0.01"
+                value={editFormData.price}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, price: parseFloat(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_validity_value">Validity Value</Label>
+                <Input
+                  id="edit_validity_value"
+                  type="number"
+                  value={editFormData.validity_value}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, validity_value: parseInt(e.target.value) || 1 })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_validity_unit">Validity Unit</Label>
+                <Select
+                  id="edit_validity_unit"
+                  value={editFormData.validity_unit}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, validity_unit: e.target.value as 'minutes' | 'hours' | 'days' })
+                  }
+                >
+                  <option value="minutes">Minutes</option>
+                  <option value="hours">Hours</option>
+                  <option value="days">Days</option>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_data_limit">Data Limit (GB)</Label>
+              <Input
+                id="edit_data_limit"
+                type="number"
+                step="0.01"
+                value={editFormData.data_limit_gb || ''}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, data_limit_gb: parseFloat(e.target.value) || undefined })
+                }
+                placeholder="Optional - leave empty for unlimited"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingPackage(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? 'Updating...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deletingPackage} onOpenChange={(open) => !open && setDeletingPackage(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Package</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Are you sure you want to delete the package <strong>{deletingPackage?.name}</strong>? This action cannot be undone.
+            </p>
+            <p className="text-sm text-gray-500">
+              The package will be disabled and will no longer be available for new subscriptions.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingPackage(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete Package'}
             </Button>
           </DialogFooter>
         </DialogContent>

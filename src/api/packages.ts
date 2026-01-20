@@ -29,4 +29,8 @@ export const packagesApi = {
     );
     return response.data;
   },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.patch(`/api/packages/${id}/disable`);
+  },
 };
