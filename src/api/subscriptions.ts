@@ -9,7 +9,7 @@ export const subscriptionsApi = {
     customer_id?: string;
     router_id?: string;
   }): Promise<Subscription[]> => {
-    const response = await apiClient.get<Subscription[]>('/api/subscriptions', { params });
+    const response = await apiClient.get<Subscription[]>('/api/subscriptions/', { params });
     return response.data;
   },
 
