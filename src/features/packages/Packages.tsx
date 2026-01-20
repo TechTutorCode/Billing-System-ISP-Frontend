@@ -11,7 +11,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, RefreshCw, Wifi, WifiOff, Edit2, Trash2, Package, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, RefreshCw, Wifi, WifiOff, Edit2, Trash2, Box, CheckCircle, XCircle } from 'lucide-react';
 
 export const Packages = () => {
   const [selectedRouter, setSelectedRouter] = useState<string>('');
@@ -319,7 +319,7 @@ export const Packages = () => {
                   </p>
                 </div>
                 <div className="bg-blue-50 p-3 rounded-lg">
-                  <Package className="h-6 w-6 text-blue-600" />
+                  <Box className="h-6 w-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
