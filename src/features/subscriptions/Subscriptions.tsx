@@ -13,10 +13,12 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Play, Pause, User, Calendar, Users, Clock, TrendingUp, AlertCircle, Ban } from 'lucide-react';
+import { Plus, Play, Pause, User, Calendar, Users, Clock, TrendingUp, AlertCircle, Ban, Search } from 'lucide-react';
 
 export const Subscriptions = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
   const [formData, setFormData] = useState<SubscriptionCreate>({
     customer_id: '',
     router_id: '',
@@ -49,6 +51,28 @@ export const Subscriptions = () => {
     queryFn: () => packagesApi.listByRouter(formData.router_id),
     enabled: !!formData.router_id,
   });
+
+  // Fetch all packages for search (we need to get packages from all routers)
+  const { data: allRouters = [] } = useQuery({
+    queryKey: ['routers'],
+    queryFn: routersApi.list,
+  });
+
+  // Fetch packages from all routers for search functionality
+  const allPackagesQueries = useQuery({
+    queryKey: ['all-packages-for-search'],
+    queryFn: async () => {
+      if (allRouters.length === 0) return [];
+      const packagePromises = allRouters.map((router) => 
+        packagesApi.listByRouter(router.id).catch(() => [])
+      );
+      const packageArrays = await Promise.all(packagePromises);
+      return packageArrays.flat();
+    },
+    enabled: allRouters.length > 0,
+  });
+
+  const allPackages = allPackagesQueries.data || [];
 
   const createMutation = useMutation({
     mutationFn: subscriptionsApi.create,
@@ -125,9 +149,40 @@ export const Subscriptions = () => {
   };
 
   const getPackageName = (packageId: string) => {
-    const pkg = packages.find((p) => p.id === packageId);
+    // First check form packages, then all packages
+    const pkg = packages.find((p) => p.id === packageId) || allPackages.find((p) => p.id === packageId);
     return pkg ? pkg.name : packageId;
   };
+
+  // Filter subscriptions based on search and status
+  const filteredSubscriptions = useMemo(() => {
+    let filtered = subscriptions;
+
+    // Filter by status
+    if (statusFilter) {
+      filtered = filtered.filter((sub) => sub.status === statusFilter);
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((sub) => {
+        const username = sub.username.toLowerCase();
+        const customerName = getCustomerName(sub.customer_id).toLowerCase();
+        const packageName = getPackageName(sub.package_id).toLowerCase();
+        const ipAddress = sub.ip_address?.toLowerCase() || '';
+        
+        return (
+          username.includes(query) ||
+          customerName.includes(query) ||
+          packageName.includes(query) ||
+          ipAddress.includes(query)
+        );
+      });
+    }
+
+    return filtered;
+  }, [subscriptions, searchQuery, statusFilter, customers, allPackages]);
 
   const handleCreate = () => {
     if (!formData.customer_id || !formData.router_id || !formData.package_id || !formData.username) {
@@ -198,6 +253,43 @@ export const Subscriptions = () => {
           New Subscription
         </Button>
       </div>
+
+      {/* Search and Filter */}
+      {!isLoading && subscriptions.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  placeholder="Search by username, customer name, package, or IP address..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="w-full sm:w-48">
+                <Select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="active">Active</option>
+                  <option value="pending">Pending</option>
+                  <option value="suspended">Suspended</option>
+                  <option value="expired">Expired</option>
+                  <option value="terminated">Terminated</option>
+                </Select>
+              </div>
+            </div>
+            {filteredSubscriptions.length !== subscriptions.length && (
+              <p className="text-sm text-gray-500 mt-3">
+                Showing {filteredSubscriptions.length} of {subscriptions.length} subscriptions
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Analytics Cards */}
       {!isLoading && subscriptions.length > 0 && (
@@ -305,9 +397,30 @@ export const Subscriptions = () => {
             </Button>
           </CardContent>
         </Card>
+      ) : filteredSubscriptions.length === 0 ? (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <p className="text-gray-400 mb-4">
+              {searchQuery || statusFilter 
+                ? 'No subscriptions found matching your search criteria' 
+                : 'No subscriptions found'}
+            </p>
+            {(searchQuery || statusFilter) && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchQuery('');
+                  setStatusFilter('');
+                }}
+              >
+                Clear Filters
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {subscriptions.map((sub) => (
+          {filteredSubscriptions.map((sub) => (
             <Card key={sub.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
