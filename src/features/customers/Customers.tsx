@@ -9,7 +9,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Search, Edit2, Mail, Phone, MapPin, Trash2 } from 'lucide-react';
+import { Plus, Search, Edit2, Mail, Phone, MapPin, Trash2, RotateCcw } from 'lucide-react';
 
 export const Customers = () => {
   const [search, setSearch] = useState('');
@@ -80,6 +80,21 @@ export const Customers = () => {
         variant: 'destructive',
         title: 'Error',
         description: error.response?.data?.message || 'Failed to terminate customer',
+      });
+    },
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: (id: string) => customersApi.activate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      addToast({ title: 'Success', description: 'Customer activated successfully' });
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to activate customer',
       });
     },
   });
@@ -239,7 +254,18 @@ export const Customers = () => {
                     <Edit2 className="h-4 w-4 mr-2" />
                     Edit
                   </Button>
-                  {customer.status !== 'terminated' && (
+                  {customer.status === 'terminated' ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-green-600 hover:text-green-700 hover:bg-green-50"
+                      onClick={() => activateMutation.mutate(customer.id)}
+                      disabled={activateMutation.isPending}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      {activateMutation.isPending ? 'Activating...' : 'Activate'}
+                    </Button>
+                  ) : (
                     <Button
                       variant="outline"
                       size="sm"

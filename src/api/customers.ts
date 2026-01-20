@@ -31,4 +31,9 @@ export const customersApi = {
     const response = await apiClient.delete<Customer>(`/api/customers/${id}`);
     return response.data;
   },
+
+  activate: async (id: string): Promise<Customer> => {
+    const response = await apiClient.post<Customer>(`/api/customers/${id}/activate`);
+    return response.data;
+  },
 };
