@@ -201,86 +201,86 @@ export const Subscriptions = () => {
 
       {/* Analytics Cards */}
       {!isLoading && subscriptions.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total</p>
-                  <p className="text-2xl font-bold text-gray-900">{analytics.totalSubscriptions}</p>
+                  <p className="text-sm text-gray-600 mb-2">Total Subscriptions</p>
+                  <p className="text-3xl font-bold text-gray-900">{analytics.totalSubscriptions}</p>
                 </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <Users className="h-5 w-5 text-blue-600" />
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <Users className="h-6 w-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Expire Today</p>
-                  <p className="text-2xl font-bold text-orange-600">{analytics.expiringToday}</p>
+                  <p className="text-sm text-gray-600 mb-2">Expire Today</p>
+                  <p className="text-3xl font-bold text-orange-600">{analytics.expiringToday}</p>
                 </div>
-                <div className="bg-orange-50 p-3 rounded-lg">
-                  <Clock className="h-5 w-5 text-orange-600" />
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <Clock className="h-6 w-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">New Today</p>
-                  <p className="text-2xl font-bold text-green-600">{analytics.newToday}</p>
+                  <p className="text-sm text-gray-600 mb-2">New Today</p>
+                  <p className="text-3xl font-bold text-green-600">{analytics.newToday}</p>
                 </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">New This Month</p>
-                  <p className="text-2xl font-bold text-purple-600">{analytics.newThisMonth}</p>
+                  <p className="text-sm text-gray-600 mb-2">New This Month</p>
+                  <p className="text-3xl font-bold text-purple-600">{analytics.newThisMonth}</p>
                 </div>
-                <div className="bg-purple-50 p-3 rounded-lg">
-                  <Calendar className="h-5 w-5 text-purple-600" />
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <Calendar className="h-6 w-6 text-purple-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Expired</p>
-                  <p className="text-2xl font-bold text-red-600">{analytics.expired}</p>
+                  <p className="text-sm text-gray-600 mb-2">Expired</p>
+                  <p className="text-3xl font-bold text-red-600">{analytics.expired}</p>
                 </div>
-                <div className="bg-red-50 p-3 rounded-lg">
-                  <AlertCircle className="h-5 w-5 text-red-600" />
+                <div className="bg-red-50 p-4 rounded-lg">
+                  <AlertCircle className="h-6 w-6 text-red-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Suspended</p>
-                  <p className="text-2xl font-bold text-yellow-600">{analytics.suspended}</p>
+                  <p className="text-sm text-gray-600 mb-2">Suspended</p>
+                  <p className="text-3xl font-bold text-yellow-600">{analytics.suspended}</p>
                 </div>
-                <div className="bg-yellow-50 p-3 rounded-lg">
-                  <Ban className="h-5 w-5 text-yellow-600" />
+                <div className="bg-yellow-50 p-4 rounded-lg">
+                  <Ban className="h-6 w-6 text-yellow-600" />
                 </div>
               </div>
             </CardContent>
