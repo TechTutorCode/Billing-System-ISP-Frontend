@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { packagesApi } from '../../api/packages';
 import { routersApi } from '../../api/routers';
@@ -11,7 +11,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, RefreshCw, Wifi, WifiOff, Edit2, Trash2 } from 'lucide-react';
+import { Plus, RefreshCw, Wifi, WifiOff, Edit2, Trash2, Package, CheckCircle, XCircle } from 'lucide-react';
 
 export const Packages = () => {
   const [selectedRouter, setSelectedRouter] = useState<string>('');
@@ -248,6 +248,17 @@ export const Packages = () => {
     syncMutation.mutate({ id: pkg.id });
   };
 
+  // Calculate statistics for the selected router
+  const stats = useMemo(() => {
+    if (!selectedRouter || packages.length === 0) {
+      return { total: 0, synced: 0, notSynced: 0 };
+    }
+    const total = packages.length;
+    const synced = packages.filter((pkg) => pkg.mikrotik_synced).length;
+    const notSynced = packages.filter((pkg) => !pkg.mikrotik_synced).length;
+    return { total, synced, notSynced };
+  }, [packages, selectedRouter]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -294,6 +305,57 @@ export const Packages = () => {
           </Select>
         </CardContent>
       </Card>
+
+      {/* Statistics Cards - Only show when router is selected */}
+      {selectedRouter && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Total Packages</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {isLoading ? '...' : stats.total}
+                  </p>
+                </div>
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <Package className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Synced</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {isLoading ? '...' : stats.synced}
+                  </p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Not Synced</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {isLoading ? '...' : stats.notSynced}
+                  </p>
+                </div>
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <XCircle className="h-6 w-6 text-orange-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Packages List */}
       {!selectedRouter ? (
