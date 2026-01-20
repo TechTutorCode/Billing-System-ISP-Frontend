@@ -5,6 +5,7 @@ import { Customer, CustomerCreate, CustomerUpdate } from '../../api/types';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
 import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
@@ -13,6 +14,7 @@ import { Plus, Search, Edit2, Mail, Phone, MapPin, Trash2, RotateCcw } from 'luc
 
 export const Customers = () => {
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'terminated'>('all');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [terminatingCustomer, setTerminatingCustomer] = useState<Customer | null>(null);
@@ -29,8 +31,12 @@ export const Customers = () => {
   const { addToast } = useToast();
 
   const { data: customers = [], isLoading } = useQuery({
-    queryKey: ['customers', search],
-    queryFn: () => customersApi.list({ search, limit: 100 }),
+    queryKey: ['customers', search, statusFilter],
+    queryFn: () => customersApi.list({ 
+      search, 
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      limit: 100 
+    }),
   });
 
   const createMutation = useMutation({
@@ -176,17 +182,29 @@ export const Customers = () => {
         </Button>
       </div>
 
-      {/* Search */}
+      {/* Search and Filter */}
       <Card>
         <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="Search by name, email, or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
-            />
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search by name, email, or phone..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="w-48">
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'terminated')}
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="terminated">Terminated</option>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
