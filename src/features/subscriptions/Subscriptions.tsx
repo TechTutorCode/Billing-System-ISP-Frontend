@@ -275,7 +275,7 @@ export const Subscriptions = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Expire Today</p>
+                  <p className="text-sm text-gray-600 mb-2">To Expire Today</p>
                   <p className="text-3xl font-bold text-orange-600">{analytics.expiringToday}</p>
                 </div>
                 <div className="bg-orange-50 p-4 rounded-lg">
