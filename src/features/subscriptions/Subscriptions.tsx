@@ -9,12 +9,11 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '../../components/ui/dialog';
+import { Card, CardContent } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Play, Pause } from 'lucide-react';
-import { Card, CardContent } from '../../components/ui/card';
+import { Plus, Play, Pause, User, Calendar } from 'lucide-react';
 
 export const Subscriptions = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -46,14 +45,9 @@ export const Subscriptions = () => {
   });
 
   const { data: packages = [] } = useQuery({
-    queryKey: ['packages'],
-    queryFn: () => {
-      // Get packages from all routers
-      return Promise.all(routers.map((r) => packagesApi.listByRouter(r.id))).then((results) =>
-        results.flat()
-      );
-    },
-    enabled: routers.length > 0,
+    queryKey: ['packages', formData.router_id],
+    queryFn: () => packagesApi.listByRouter(formData.router_id),
+    enabled: !!formData.router_id,
   });
 
   const createMutation = useMutation({
@@ -61,6 +55,7 @@ export const Subscriptions = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       setIsCreateOpen(false);
+      resetForm();
       addToast({ title: 'Success', description: 'Subscription created successfully' });
     },
     onError: (error: any) => {
@@ -96,6 +91,17 @@ export const Subscriptions = () => {
     },
   });
 
+  const resetForm = () => {
+    setFormData({
+      customer_id: '',
+      router_id: '',
+      package_id: '',
+      username: '',
+      password: '',
+      ip_address: '',
+    });
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -113,136 +119,173 @@ export const Subscriptions = () => {
     }
   };
 
+  const getCustomerName = (customerId: string) => {
+    const customer = customers.find((c) => c.id === customerId);
+    return customer ? `${customer.first_name} ${customer.last_name}` : customerId;
+  };
+
+  const getPackageName = (packageId: string) => {
+    const pkg = packages.find((p) => p.id === packageId);
+    return pkg ? pkg.name : packageId;
+  };
+
   const handleCreate = () => {
+    if (!formData.customer_id || !formData.router_id || !formData.package_id || !formData.username) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please fill in all required fields',
+      });
+      return;
+    }
     createMutation.mutate(formData);
   };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
-          <p className="text-gray-600 mt-1">Manage customer subscriptions</p>
+          <p className="text-gray-500 mt-1">Manage customer service subscriptions</p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Create Subscription
+          New Subscription
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          {isLoading ? (
-            <div className="p-8 text-center text-gray-400">Loading...</div>
-          ) : subscriptions.length === 0 ? (
-            <div className="p-8 text-center text-gray-400">No subscriptions found</div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Package</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Start Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subscriptions.map((sub) => (
-                  <TableRow key={sub.id}>
-                    <TableCell>{sub.customer_id}</TableCell>
-                    <TableCell className="font-medium">{sub.username}</TableCell>
-                    <TableCell>{sub.package_id}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusColor(sub.status)}>{sub.status}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {sub.start_at ? new Date(sub.start_at).toLocaleDateString() : '-'}
-                    </TableCell>
-                    <TableCell>
-                      {sub.end_at ? new Date(sub.end_at).toLocaleDateString() : '-'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {sub.status === 'pending' && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => activateMutation.mutate(sub.id)}
-                          >
-                            <Play className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {sub.status === 'active' && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => suspendMutation.mutate(sub.id)}
-                          >
-                            <Pause className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {sub.status === 'suspended' && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => resumeMutation.mutate(sub.id)}
-                          >
-                            <Play className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      {/* Subscriptions List */}
+      {isLoading ? (
+        <Card>
+          <CardContent className="p-12 text-center text-gray-400">
+            Loading subscriptions...
+          </CardContent>
+        </Card>
+      ) : subscriptions.length === 0 ? (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <p className="text-gray-400 mb-4">No subscriptions found</p>
+            <Button onClick={() => setIsCreateOpen(true)} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Create First Subscription
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {subscriptions.map((sub) => (
+            <Card key={sub.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-900">{sub.username}</h3>
+                    <p className="text-sm text-gray-500 flex items-center mt-1">
+                      <User className="h-3 w-3 mr-1" />
+                      {getCustomerName(sub.customer_id)}
+                    </p>
+                  </div>
+                  <Badge variant={getStatusColor(sub.status)}>{sub.status}</Badge>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="text-sm text-gray-600">
+                    <span className="font-medium">Package:</span> {getPackageName(sub.package_id)}
+                  </div>
+                  {sub.start_at && (
+                    <div className="text-sm text-gray-600 flex items-center">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      <span className="font-medium">Start:</span>{' '}
+                      {new Date(sub.start_at).toLocaleDateString()}
+                    </div>
+                  )}
+                  {sub.end_at && (
+                    <div className="text-sm text-gray-600 flex items-center">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      <span className="font-medium">End:</span>{' '}
+                      {new Date(sub.end_at).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {sub.status === 'pending' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => activateMutation.mutate(sub.id)}
+                      disabled={activateMutation.isPending}
+                    >
+                      <Play className="h-4 w-4 mr-1" />
+                      Activate
+                    </Button>
+                  )}
+                  {sub.status === 'active' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => suspendMutation.mutate(sub.id)}
+                      disabled={suspendMutation.isPending}
+                    >
+                      <Pause className="h-4 w-4 mr-1" />
+                      Suspend
+                    </Button>
+                  )}
+                  {sub.status === 'suspended' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => resumeMutation.mutate(sub.id)}
+                      disabled={resumeMutation.isPending}
+                    >
+                      <Play className="h-4 w-4 mr-1" />
+                      Resume
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Create Dialog */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-2xl" onClose={() => setIsCreateOpen(false)}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Subscription</DialogTitle>
+            <DialogTitle>Create New Subscription</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="customer">Customer *</Label>
-                <Select
-                  id="customer"
-                  value={formData.customer_id}
-                  onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })}
-                  required
-                >
-                  <option value="">Select customer...</option>
-                  {customers.map((customer) => (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.first_name} {customer.last_name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="router">Router *</Label>
-                <Select
-                  id="router"
-                  value={formData.router_id}
-                  onChange={(e) => setFormData({ ...formData, router_id: e.target.value })}
-                  required
-                >
-                  <option value="">Select router...</option>
-                  {routers.map((router) => (
-                    <option key={router.id} value={router.id}>
-                      {router.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="customer">Customer *</Label>
+              <Select
+                id="customer"
+                value={formData.customer_id}
+                onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })}
+              >
+                <option value="">Select customer...</option>
+                {customers.map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.first_name} {customer.last_name} (#{customer.account_number})
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="router">Router *</Label>
+              <Select
+                id="router"
+                value={formData.router_id}
+                onChange={(e) => setFormData({ ...formData, router_id: e.target.value, package_id: '' })}
+              >
+                <option value="">Select router...</option>
+                {routers.map((router) => (
+                  <option key={router.id} value={router.id}>
+                    {router.name}
+                  </option>
+                ))}
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="package">Package *</Label>
@@ -250,16 +293,14 @@ export const Subscriptions = () => {
                 id="package"
                 value={formData.package_id}
                 onChange={(e) => setFormData({ ...formData, package_id: e.target.value })}
-                required
+                disabled={!formData.router_id}
               >
                 <option value="">Select package...</option>
-                {packages
-                  .filter((p) => p.router_id === formData.router_id)
-                  .map((pkg) => (
-                    <option key={pkg.id} value={pkg.id}>
-                      {pkg.name}
-                    </option>
-                  ))}
+                {packages.map((pkg) => (
+                  <option key={pkg.id} value={pkg.id}>
+                    {pkg.name} - ${pkg.price}
+                  </option>
+                ))}
               </Select>
             </div>
             <div className="space-y-2">
@@ -268,31 +309,35 @@ export const Subscriptions = () => {
                 id="username"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                required
+                placeholder="e.g., customer123"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password (for PPPoE)</Label>
+              <Label htmlFor="password">Password (for PPPoE packages)</Label>
               <Input
                 id="password"
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                placeholder="Optional"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ip_address">IP Address (for Static)</Label>
+              <Label htmlFor="ip_address">IP Address (for Static packages)</Label>
               <Input
                 id="ip_address"
                 value={formData.ip_address}
                 onChange={(e) => setFormData({ ...formData, ip_address: e.target.value })}
+                placeholder="e.g., 192.168.1.100"
               />
             </div>
           </div>
           <DialogFooter>
-            <DialogClose onClick={() => setIsCreateOpen(false)} />
+            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleCreate} disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Creating...' : 'Create'}
+              {createMutation.isPending ? 'Creating...' : 'Create Subscription'}
             </Button>
           </DialogFooter>
         </DialogContent>

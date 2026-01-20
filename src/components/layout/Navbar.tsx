@@ -1,59 +1,112 @@
-import { Bell, Search, Menu, User } from 'lucide-react';
-import { Input } from '../ui/input';
-import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, User } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
+import { authApi } from '../../api/auth';
+import { useToast } from '../ui/toast';
+import { cn } from '../../utils/cn';
 
-interface NavbarProps {
-  onMenuClick?: () => void;
-}
+const menuItems = [
+  { path: '/', label: 'Dashboard', icon: '📊' },
+  { path: '/customers', label: 'Customers', icon: '👥' },
+  { path: '/subscriptions', label: 'Subscriptions', icon: '📋' },
+  { path: '/packages', label: 'Packages', icon: '📦' },
+  { path: '/routers', label: 'Routers', icon: '🌐' },
+  { path: '/payments', label: 'Payments', icon: '💰' },
+];
 
-export const Navbar = ({ onMenuClick }: NavbarProps) => {
-  const [notifications] = useState(3); // Mock notification count
+export const Navbar = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { clearTokens } = useAuthStore();
+  const { addToast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout(true);
+      clearTokens();
+      navigate('/login');
+    } catch (error) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to logout',
+      });
+    }
+  };
 
   return (
-    <div className="h-16 bg-gradient-to-r from-white via-gray-50 to-white border-b border-gray-200/50 shadow-sm sticky top-0 z-30 backdrop-blur-sm bg-white/95">
-      <div className="flex items-center justify-between px-4 sm:px-6 h-full">
-        {/* Mobile Menu Button */}
-        <button
-          onClick={onMenuClick}
-          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-gray-900"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
+    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-2">
+              <span className="text-2xl font-bold text-blue-600">ISP Billing</span>
+            </Link>
+          </div>
 
-        {/* Search Bar */}
-        <div className="flex-1 max-w-md mx-4">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-            <Input
-              type="search"
-              placeholder="Search customers, packages..."
-              className="pl-10 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 transition-all shadow-sm hover:shadow-md"
-            />
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-1">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  )}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* User Menu */}
+          <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
+              <User className="h-4 w-4" />
+              <span>Admin</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
           </div>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Notifications */}
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-all hover:scale-105 text-gray-600 hover:text-gray-900 group">
-            <Bell className="h-5 w-5 transition-transform group-hover:scale-110" />
-            {notifications > 0 && (
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white animate-pulse" />
-            )}
-          </button>
-
-          {/* User Avatar */}
-          <div className="flex items-center gap-3 pl-2 border-l border-gray-200">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow cursor-pointer group">
-              <User className="h-5 w-5 text-white group-hover:scale-110 transition-transform" />
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-sm font-medium text-gray-900">Admin</p>
-              <p className="text-xs text-gray-500">Online</p>
-            </div>
+        {/* Mobile Navigation */}
+        <div className="md:hidden pb-4 overflow-x-auto">
+          <div className="flex space-x-2">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    'px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
+                    isActive
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  <span className="mr-1">{item.icon}</span>
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
