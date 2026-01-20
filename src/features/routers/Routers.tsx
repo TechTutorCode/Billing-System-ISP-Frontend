@@ -10,21 +10,13 @@ export const Routers = () => {
     queryFn: routersApi.list,
   });
 
-  // Sort routers: online first, then offline, then others
+  // Sort routers: online first, then offline
   const sortedRouters = [...routers].sort((a, b) => {
     // Online routers first
-    if (a.status === 'online' && b.status !== 'online') return -1;
-    if (a.status !== 'online' && b.status === 'online') return 1;
+    if (a.status === 'online' && b.status === 'offline') return -1;
+    if (a.status === 'offline' && b.status === 'online') return 1;
     
-    // Offline routers second
-    if (a.status === 'offline' && b.status !== 'offline' && b.status !== 'online') return -1;
-    if (a.status !== 'offline' && a.status !== 'online' && b.status === 'offline') return 1;
-    
-    // Other statuses last (alphabetically)
-    if (a.status !== 'online' && a.status !== 'offline' && b.status !== 'online' && b.status !== 'offline') {
-      return a.status.localeCompare(b.status);
-    }
-    
+    // If same status, maintain order
     return 0;
   });
 
@@ -85,12 +77,6 @@ export const Routers = () => {
                       <Clock className="h-4 w-4 mr-2 text-gray-400" />
                       <span className="font-medium">Last Seen:</span>{' '}
                       {router.last_seen ? new Date(router.last_seen).toLocaleString() : 'Never'}
-                    </div>
-                  )}
-                  {router.status !== 'online' && router.status !== 'offline' && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Clock className="h-4 w-4 mr-2 text-gray-400" />
-                      <span className="font-medium">Last Seen:</span> Never
                     </div>
                   )}
                 </div>
