@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { routersApi } from '../../api/routers';
 import { Router, RouterCreate, RouterUpdate } from '../../api/types';
@@ -9,12 +9,13 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { useToast } from '../../components/ui/toast';
-import { Wifi, WifiOff, Server, Clock, Plus, Edit2, Copy, Check } from 'lucide-react';
+import { Wifi, WifiOff, Server, Clock, Plus, Edit2, Copy, Check, Search } from 'lucide-react';
 
 export const Routers = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingRouter, setEditingRouter] = useState<Router | null>(null);
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
   const [createFormData, setCreateFormData] = useState<RouterCreate>({
     name: '',
     mikrotik_api_username: 'admin',
@@ -125,15 +126,32 @@ export const Routers = () => {
     }
   };
 
-  // Sort routers: online first, then offline
-  const sortedRouters = [...routers].sort((a, b) => {
-    // Online routers first
-    if (a.status === 'online' && b.status === 'offline') return -1;
-    if (a.status === 'offline' && b.status === 'online') return 1;
+  // Filter and sort routers
+  const filteredAndSortedRouters = useMemo(() => {
+    let filtered = routers;
     
-    // If same status, maintain order
-    return 0;
-  });
+    // Apply search filter
+    if (search.trim()) {
+      const searchLower = search.toLowerCase();
+      filtered = routers.filter(
+        (router) =>
+          router.name.toLowerCase().includes(searchLower) ||
+          router.vpn_ip?.toLowerCase().includes(searchLower) ||
+          router.vpn_username.toLowerCase().includes(searchLower) ||
+          router.mikrotik_api_username.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Sort: online first, then offline
+    return filtered.sort((a, b) => {
+      // Online routers first
+      if (a.status === 'online' && b.status !== 'online') return -1;
+      if (a.status !== 'online' && b.status === 'online') return 1;
+      
+      // If same status, maintain order
+      return 0;
+    });
+  }, [routers, search]);
 
   return (
     <div className="space-y-6">
@@ -148,6 +166,23 @@ export const Routers = () => {
           Add Router
         </Button>
       </div>
+
+      {/* Search */}
+      {routers.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search by name, VPN IP, username..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Routers List */}
       {isLoading ? (
@@ -166,9 +201,15 @@ export const Routers = () => {
             </Button>
           </CardContent>
         </Card>
+      ) : filteredAndSortedRouters.length === 0 ? (
+        <Card>
+          <CardContent className="p-12 text-center text-gray-400">
+            No routers found matching your search
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedRouters.map((router) => (
+          {filteredAndSortedRouters.map((router) => (
             <Card key={router.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -322,11 +363,11 @@ export const Routers = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingRouter} onOpenChange={(open) => !open && setEditingRouter(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Edit Router</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="edit_name">Router Name</Label>
               <Input
@@ -372,7 +413,7 @@ export const Routers = () => {
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <Button variant="outline" onClick={() => setEditingRouter(null)}>
               Cancel
             </Button>
