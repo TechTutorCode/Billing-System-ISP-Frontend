@@ -4,21 +4,64 @@ import { subscriptionsApi } from './subscriptions';
 import { routersApi } from './routers';
 import { paymentsApi } from './payments';
 
+// Helper function to fetch all paginated results
+async function fetchAllCustomers(): Promise<any[]> {
+  const allCustomers: any[] = [];
+  let skip = 0;
+  const limit = 1000; // Max limit per API
+  let hasMore = true;
+
+  while (hasMore) {
+    const customers = await customersApi.list({ skip, limit });
+    allCustomers.push(...customers);
+    
+    // If we got less than the limit, we've reached the end
+    if (customers.length < limit) {
+      hasMore = false;
+    } else {
+      skip += limit;
+    }
+  }
+
+  return allCustomers;
+}
+
+async function fetchAllSubscriptions(): Promise<any[]> {
+  const allSubscriptions: any[] = [];
+  let skip = 0;
+  const limit = 1000; // Max limit per API
+  let hasMore = true;
+
+  while (hasMore) {
+    const subscriptions = await subscriptionsApi.list({ skip, limit });
+    allSubscriptions.push(...subscriptions);
+    
+    // If we got less than the limit, we've reached the end
+    if (subscriptions.length < limit) {
+      hasMore = false;
+    } else {
+      skip += limit;
+    }
+  }
+
+  return allSubscriptions;
+}
+
 export const dashboardApi = {
   getStats: async (): Promise<DashboardStats> => {
     try {
       // Fetch all data in parallel
-      const [customers, subscriptions, routers, paymentsResult] = await Promise.allSettled([
-        customersApi.list({ limit: 10000 }),
-        subscriptionsApi.list({ limit: 10000 }),
+      const [customersResult, subscriptionsResult, routersResult, paymentsResult] = await Promise.allSettled([
+        fetchAllCustomers(),
+        fetchAllSubscriptions(),
         routersApi.list(),
         paymentsApi.list().catch(() => []), // Payments might not be implemented yet
       ]);
 
       // Extract data from settled promises
-      const customersData = customers.status === 'fulfilled' ? customers.value : [];
-      const subscriptionsData = subscriptions.status === 'fulfilled' ? subscriptions.value : [];
-      const routersData = routers.status === 'fulfilled' ? routers.value : [];
+      const customersData = customersResult.status === 'fulfilled' ? customersResult.value : [];
+      const subscriptionsData = subscriptionsResult.status === 'fulfilled' ? subscriptionsResult.value : [];
+      const routersData = routersResult.status === 'fulfilled' ? routersResult.value : [];
       const paymentsData = paymentsResult.status === 'fulfilled' ? paymentsResult.value : [];
 
       // Calculate stats
@@ -103,7 +146,7 @@ export const dashboardApi = {
 
   getSubscriptionStatusData: async (): Promise<SubscriptionStatusData[]> => {
     try {
-      const subscriptions = await subscriptionsApi.list({ limit: 10000 });
+      const subscriptions = await fetchAllSubscriptions();
       
       // Count by status
       const statusCounts = new Map<string, number>();
