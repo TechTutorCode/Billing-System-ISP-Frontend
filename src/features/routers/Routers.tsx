@@ -62,11 +62,17 @@ export const Routers = () => {
                     <Server className="h-4 w-4 mr-2 text-gray-400" />
                     <span className="font-medium">API Port:</span> {router.api_port}
                   </div>
-                  {router.last_seen && (
+                  {router.status === 'offline' && (
                     <div className="flex items-center text-sm text-gray-600">
                       <Clock className="h-4 w-4 mr-2 text-gray-400" />
                       <span className="font-medium">Last Seen:</span>{' '}
-                      {new Date(router.last_seen).toLocaleString()}
+                      {router.last_seen ? new Date(router.last_seen).toLocaleString() : 'Never'}
+                    </div>
+                  )}
+                  {router.status !== 'online' && router.status !== 'offline' && (
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Clock className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="font-medium">Last Seen:</span> Never
                     </div>
                   )}
                 </div>
