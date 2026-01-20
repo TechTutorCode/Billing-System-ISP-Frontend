@@ -27,19 +27,19 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
         {/* ISP Name */}
         <div className="flex-1 lg:ml-0 ml-4">
           {isLoading ? (
-            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+            <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
           ) : (
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-md">
-                <span className="text-white text-sm font-bold">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg ring-2 ring-blue-200">
+                <span className="text-white text-base font-bold">
                   {ispProfile?.name?.charAt(0).toUpperCase() || 'I'}
                 </span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-lg font-bold text-gray-900 tracking-tight">
                   {ispProfile?.name || 'ISP Name'}
                 </p>
-                <p className="text-xs text-gray-500">Internet Service Provider</p>
+                <p className="text-xs text-gray-500 font-medium">Internet Service Provider</p>
               </div>
             </div>
           )}
