@@ -147,15 +147,71 @@ export const Packages = () => {
   };
 
   const handleCreate = () => {
-    if (!formData.router_id || !formData.package_type_id || !formData.name) {
+    // Set router_id from selectedRouter
+    const dataToSubmit = {
+      ...formData,
+      router_id: selectedRouter,
+    };
+
+    // Validate all required fields
+    if (!dataToSubmit.router_id) {
       addToast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Please fill in all required fields',
+        description: 'Please select a router first',
       });
       return;
     }
-    createMutation.mutate(formData);
+    if (!dataToSubmit.package_type_id) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select a package type',
+      });
+      return;
+    }
+    if (!dataToSubmit.name || dataToSubmit.name.trim() === '') {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Package name is required',
+      });
+      return;
+    }
+    if (!dataToSubmit.download_speed || dataToSubmit.download_speed <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Download speed must be greater than 0',
+      });
+      return;
+    }
+    if (!dataToSubmit.upload_speed || dataToSubmit.upload_speed <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Upload speed must be greater than 0',
+      });
+      return;
+    }
+    if (!dataToSubmit.price || dataToSubmit.price <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Price must be greater than 0',
+      });
+      return;
+    }
+    if (!dataToSubmit.validity_value || dataToSubmit.validity_value <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Validity value must be greater than 0',
+      });
+      return;
+    }
+
+    createMutation.mutate(dataToSubmit);
   };
 
   const handleUpdate = () => {
@@ -200,7 +256,19 @@ export const Packages = () => {
           <h1 className="text-3xl font-bold text-gray-900">Packages</h1>
           <p className="text-gray-500 mt-1">Manage service packages for your routers</p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)} disabled={!selectedRouter}>
+        <Button
+          onClick={() => {
+            if (!selectedRouter) {
+              addToast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Please select a router first',
+              });
+              return;
+            }
+            setIsCreateOpen(true);
+          }}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Package
         </Button>
