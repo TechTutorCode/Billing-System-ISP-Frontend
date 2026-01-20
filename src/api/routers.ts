@@ -1,5 +1,5 @@
 import apiClient from './client';
-import { Router, RouterStatusHistory } from './types';
+import { Router, RouterStatusHistory, RouterCreate, RouterUpdate, RouterCreateResponse } from './types';
 
 export const routersApi = {
   list: async (): Promise<Router[]> => {
@@ -9,6 +9,16 @@ export const routersApi = {
 
   get: async (id: string): Promise<Router> => {
     const response = await apiClient.get<Router>(`/api/routers/${id}`);
+    return response.data;
+  },
+
+  create: async (data: RouterCreate): Promise<RouterCreateResponse> => {
+    const response = await apiClient.post<RouterCreateResponse>('/api/routers', data);
+    return response.data;
+  },
+
+  update: async (id: string, data: RouterUpdate): Promise<Router> => {
+    const response = await apiClient.put<Router>(`/api/routers/${id}`, data);
     return response.data;
   },
 

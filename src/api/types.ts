@@ -150,6 +150,26 @@ export interface Router {
   created_at: string;
 }
 
+export interface RouterCreate {
+  name: string;
+  mikrotik_api_username?: string;
+  mikrotik_api_password?: string;
+}
+
+export interface RouterUpdate {
+  name?: string;
+  api_port?: number;
+  mikrotik_api_username?: string;
+  mikrotik_api_password?: string;
+}
+
+export interface RouterCreateResponse {
+  status_code: number;
+  message: string;
+  router: Router;
+  openvpn_config: string;
+}
+
 export interface RouterStatusHistory {
   id: string;
   router_id: string;
