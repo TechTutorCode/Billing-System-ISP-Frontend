@@ -171,9 +171,13 @@ export const Packages = () => {
             <Card key={pkg.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="font-semibold text-lg text-gray-900">{pkg.name}</h3>
-                    <p className="text-sm text-gray-500">{pkg.package_type?.name || 'N/A'}</p>
+                    <div className="mt-2">
+                      <Badge variant="outline" className="text-xs">
+                        {pkg.package_type?.name || 'N/A'}
+                      </Badge>
+                    </div>
                   </div>
                   {pkg.mikrotik_synced ? (
                     <Badge variant="default" className="bg-green-100 text-green-800">
@@ -188,6 +192,10 @@ export const Packages = () => {
                   )}
                 </div>
                 <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Package Type:</span>
+                    <span className="font-medium">{pkg.package_type?.name || 'N/A'}</span>
+                  </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Download:</span>
                     <span className="font-medium">{pkg.download_speed} Mbps</span>
