@@ -1,112 +1,64 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, User } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
-import { authApi } from '../../api/auth';
-import { useToast } from '../ui/toast';
-import { cn } from '../../utils/cn';
+import { Menu, User } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { ispsApi } from '../../api/isps';
 
-const menuItems = [
-  { path: '/', label: 'Dashboard', icon: '📊' },
-  { path: '/customers', label: 'Customers', icon: '👥' },
-  { path: '/subscriptions', label: 'Subscriptions', icon: '📋' },
-  { path: '/packages', label: 'Packages', icon: '📦' },
-  { path: '/routers', label: 'Routers', icon: '🌐' },
-  { path: '/payments', label: 'Payments', icon: '💰' },
-];
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
 
-export const Navbar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { clearTokens } = useAuthStore();
-  const { addToast } = useToast();
-
-  const handleLogout = async () => {
-    try {
-      await authApi.logout(true);
-      clearTokens();
-      navigate('/login');
-    } catch (error) {
-      addToast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to logout',
-      });
-    }
-  };
+export const Navbar = ({ onMenuClick }: NavbarProps) => {
+  const { data: ispProfile, isLoading } = useQuery({
+    queryKey: ['isp-profile'],
+    queryFn: () => ispsApi.getProfile(),
+    retry: 1,
+  });
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-blue-600">ISP Billing</span>
-            </Link>
-          </div>
+    <div className="h-16 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+      <div className="flex items-center justify-between px-4 sm:px-6 h-full">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={onMenuClick}
+          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-gray-900"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-1">
-            {menuItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  )}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* User Menu */}
-          <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-              <User className="h-4 w-4" />
-              <span>Admin</span>
+        {/* ISP Name */}
+        <div className="flex-1 lg:ml-0 ml-4">
+          {isLoading ? (
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-md">
+                <span className="text-white text-sm font-bold">
+                  {ispProfile?.name?.charAt(0).toUpperCase() || 'I'}
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {ispProfile?.name || 'ISP Name'}
+                </p>
+                <p className="text-xs text-gray-500">Internet Service Provider</p>
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">Logout</span>
-            </button>
-          </div>
+          )}
         </div>
 
-        {/* Mobile Navigation */}
-        <div className="md:hidden pb-4 overflow-x-auto">
-          <div className="flex space-x-2">
-            {menuItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    'px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
-                    isActive
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  )}
-                >
-                  <span className="mr-1">{item.icon}</span>
-                  {item.label}
-                </Link>
-              );
-            })}
+        {/* Right Actions */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* User Avatar */}
+          <div className="flex items-center gap-3 pl-2 border-l border-gray-200">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow cursor-pointer group">
+              <User className="h-5 w-5 text-white group-hover:scale-110 transition-transform" />
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-sm font-medium text-gray-900">Admin</p>
+              <p className="text-xs text-gray-500">Online</p>
+            </div>
           </div>
         </div>
       </div>
-    </nav>
+    </div>
   );
 };

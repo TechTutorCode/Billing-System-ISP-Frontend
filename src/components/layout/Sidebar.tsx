@@ -9,6 +9,7 @@ import {
   Receipt,
   LogOut,
   X,
+  Sparkles,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../api/auth';
@@ -56,71 +57,106 @@ export const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
 
   const sidebarContent = (
     <div className={cn(
-      "w-64 bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 h-screen flex flex-col shadow-2xl",
+      "w-72 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 h-screen flex flex-col shadow-2xl relative overflow-hidden",
       "lg:static lg:translate-x-0 lg:z-auto fixed top-0 left-0 z-50 transition-transform duration-300 ease-in-out",
       isOpen === false ? "-translate-x-full lg:translate-x-0" : "translate-x-0"
     )}>
-      {/* Mobile Close Button */}
-      {onClose && (
-        <button
-          onClick={onClose}
-          className="lg:hidden absolute top-4 right-4 p-2 rounded-lg text-white hover:bg-white/20 transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      )}
-
-      {/* Logo/Brand */}
-      <div className="p-6 border-b border-white/10">
-        <h1 className="text-2xl font-bold text-white tracking-tight bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-          ISP Billing
-        </h1>
-        <p className="text-xs text-blue-200 mt-1">Management System</p>
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative group',
-                isActive
-                  ? 'bg-white/20 text-white shadow-lg shadow-white/10 scale-105'
-                  : 'text-blue-100 hover:bg-white/10 hover:text-white hover:scale-102'
-              )}
-            >
-              <div className={cn(
-                "absolute inset-0 rounded-xl transition-opacity",
-                isActive ? "bg-gradient-to-r from-white/30 to-transparent" : "bg-gradient-to-r from-white/0 to-transparent group-hover:from-white/10"
-              )} />
-              <Icon className={cn(
-                "h-5 w-5 relative z-10 transition-transform",
-                isActive && "scale-110"
-              )} />
-              <span className="relative z-10">{item.label}</span>
-              {isActive && (
-                <div className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full" />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-pink-600/20" />
 
-      {/* Logout Button */}
-      <div className="p-4 border-t border-white/10">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-white bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 transition-all duration-200 hover:scale-105 hover:shadow-lg"
-        >
-          <LogOut className="h-5 w-5" />
-          <span>Logout</span>
-        </button>
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full">
+        {/* Mobile Close Button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden absolute top-4 right-4 p-2 rounded-lg text-white hover:bg-white/20 transition-colors z-20"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
+
+        {/* Logo/Brand */}
+        <div className="p-6 border-b border-white/10 backdrop-blur-sm">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg shadow-lg">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white tracking-tight">
+                ISP Billing
+              </h1>
+              <p className="text-xs text-purple-200 mt-0.5">Management System</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={onClose}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 relative group',
+                  isActive
+                    ? 'bg-gradient-to-r from-blue-500/90 to-purple-500/90 text-white shadow-lg shadow-purple-500/50 scale-[1.02]'
+                    : 'text-purple-100 hover:bg-white/10 hover:text-white hover:scale-[1.01]'
+                )}
+              >
+                {/* Active Indicator */}
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full" />
+                )}
+                
+                {/* Icon Container */}
+                <div className={cn(
+                  "p-2 rounded-lg transition-all duration-300",
+                  isActive 
+                    ? "bg-white/20 shadow-md" 
+                    : "bg-white/5 group-hover:bg-white/10"
+                )}>
+                  <Icon className={cn(
+                    "h-5 w-5 transition-transform duration-300",
+                    isActive && "scale-110"
+                  )} />
+                </div>
+                
+                <span className="relative z-10 flex-1">{item.label}</span>
+                
+                {/* Hover Effect */}
+                {!isActive && (
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Logout Button */}
+        <div className="p-4 border-t border-white/10 backdrop-blur-sm">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 border border-red-400/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/20 group"
+          >
+            <div className="p-1.5 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
+              <LogOut className="h-4 w-4" />
+            </div>
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </div>
   );
