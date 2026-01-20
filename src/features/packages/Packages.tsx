@@ -198,7 +198,7 @@ export const Packages = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Price:</span>
-                    <span className="font-medium">${pkg.price}</span>
+                    <span className="font-medium">KES {pkg.price}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Validity:</span>
@@ -266,7 +266,7 @@ export const Packages = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($) *</Label>
+              <Label htmlFor="price">Price (KES) *</Label>
               <Input
                 id="price"
                 type="number"

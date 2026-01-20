@@ -126,7 +126,7 @@ export const Payments = () => {
                   <div>
                     <h3 className="font-semibold text-lg text-gray-900 flex items-center">
                       <DollarSign className="h-5 w-5 mr-2 text-green-600" />
-                      ${payment.amount.toFixed(2)}
+                      KES {payment.amount.toFixed(2)}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1">
                       Subscription: {payment.subscription_id.slice(0, 8)}...
@@ -178,7 +178,7 @@ export const Payments = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount ($) *</Label>
+              <Label htmlFor="amount">Amount (KES) *</Label>
               <Input
                 id="amount"
                 type="number"

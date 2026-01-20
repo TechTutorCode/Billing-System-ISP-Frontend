@@ -298,7 +298,7 @@ export const Subscriptions = () => {
                 <option value="">Select package...</option>
                 {packages.map((pkg) => (
                   <option key={pkg.id} value={pkg.id}>
-                    {pkg.name} - ${pkg.price}
+                    {pkg.name} - KES {pkg.price}
                   </option>
                 ))}
               </Select>
