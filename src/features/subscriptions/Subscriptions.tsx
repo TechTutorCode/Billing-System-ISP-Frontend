@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { subscriptionsApi } from '../../api/subscriptions';
 import { customersApi } from '../../api/customers';
@@ -13,7 +13,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Play, Pause, User, Calendar } from 'lucide-react';
+import { Plus, Play, Pause, User, Calendar, Users, Clock, TrendingUp, AlertCircle, Ban } from 'lucide-react';
 
 export const Subscriptions = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -31,7 +31,7 @@ export const Subscriptions = () => {
 
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ['subscriptions'],
-    queryFn: () => subscriptionsApi.list({ limit: 100 }),
+    queryFn: () => subscriptionsApi.list({ limit: 1000 }),
   });
 
   const { data: customers = [] } = useQuery({
@@ -141,6 +141,50 @@ export const Subscriptions = () => {
     createMutation.mutate(formData);
   };
 
+  // Calculate analytics
+  const analytics = useMemo(() => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayEnd = new Date(todayStart);
+    todayEnd.setDate(todayEnd.getDate() + 1);
+    
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const totalSubscriptions = subscriptions.length;
+    
+    const expiringToday = subscriptions.filter((sub) => {
+      if (!sub.end_at) return false;
+      const endDate = new Date(sub.end_at);
+      return endDate >= todayStart && endDate < todayEnd && 
+             (sub.status === 'active' || sub.status === 'suspended');
+    }).length;
+
+    const newToday = subscriptions.filter((sub) => {
+      if (!sub.created_at) return false;
+      const createdDate = new Date(sub.created_at);
+      return createdDate >= todayStart && createdDate < todayEnd;
+    }).length;
+
+    const newThisMonth = subscriptions.filter((sub) => {
+      if (!sub.created_at) return false;
+      const createdDate = new Date(sub.created_at);
+      return createdDate >= monthStart && createdDate < monthEnd;
+    }).length;
+
+    const expired = subscriptions.filter((sub) => sub.status === 'expired').length;
+    const suspended = subscriptions.filter((sub) => sub.status === 'suspended').length;
+
+    return {
+      totalSubscriptions,
+      expiringToday,
+      newToday,
+      newThisMonth,
+      expired,
+      suspended,
+    };
+  }, [subscriptions]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -154,6 +198,95 @@ export const Subscriptions = () => {
           New Subscription
         </Button>
       </div>
+
+      {/* Analytics Cards */}
+      {!isLoading && subscriptions.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Total</p>
+                  <p className="text-2xl font-bold text-gray-900">{analytics.totalSubscriptions}</p>
+                </div>
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <Users className="h-5 w-5 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Expire Today</p>
+                  <p className="text-2xl font-bold text-orange-600">{analytics.expiringToday}</p>
+                </div>
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <Clock className="h-5 w-5 text-orange-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">New Today</p>
+                  <p className="text-2xl font-bold text-green-600">{analytics.newToday}</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">New This Month</p>
+                  <p className="text-2xl font-bold text-purple-600">{analytics.newThisMonth}</p>
+                </div>
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <Calendar className="h-5 w-5 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Expired</p>
+                  <p className="text-2xl font-bold text-red-600">{analytics.expired}</p>
+                </div>
+                <div className="bg-red-50 p-3 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Suspended</p>
+                  <p className="text-2xl font-bold text-yellow-600">{analytics.suspended}</p>
+                </div>
+                <div className="bg-yellow-50 p-3 rounded-lg">
+                  <Ban className="h-5 w-5 text-yellow-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Subscriptions List */}
       {isLoading ? (
