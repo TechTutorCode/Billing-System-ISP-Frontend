@@ -16,7 +16,6 @@ import { Plus, RefreshCw, Wifi, WifiOff } from 'lucide-react';
 export const Packages = () => {
   const [selectedRouter, setSelectedRouter] = useState<string>('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [syncingPackage, setSyncingPackage] = useState<Package | null>(null);
   const [formData, setFormData] = useState<PackageCreate>({
     name: '',
     download_speed: 0,
@@ -68,7 +67,6 @@ export const Packages = () => {
     mutationFn: ({ id }: { id: string }) => packagesApi.sync(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['packages'] });
-      setSyncingPackage(null);
       addToast({ title: 'Success', description: 'Package synced successfully' });
     },
     onError: (error: any) => {
@@ -106,7 +104,6 @@ export const Packages = () => {
   };
 
   const handleSync = (pkg: Package) => {
-    setSyncingPackage(pkg);
     syncMutation.mutate({ id: pkg.id });
   };
 
@@ -298,11 +295,12 @@ export const Packages = () => {
                   id="validity_unit"
                   value={formData.validity_unit}
                   onChange={(e) =>
-                    setFormData({ ...formData, validity_unit: e.target.value as 'days' | 'months' })
+                    setFormData({ ...formData, validity_unit: e.target.value as 'minutes' | 'hours' | 'days' })
                   }
                 >
+                  <option value="minutes">Minutes</option>
+                  <option value="hours">Hours</option>
                   <option value="days">Days</option>
-                  <option value="months">Months</option>
                 </Select>
               </div>
             </div>

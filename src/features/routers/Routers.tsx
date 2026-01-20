@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { routersApi } from '../../api/routers';
-import { Router } from '../../api/types';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Wifi, WifiOff, Server, Clock } from 'lucide-react';
