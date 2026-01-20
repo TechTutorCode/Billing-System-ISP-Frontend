@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { customersApi } from '../../api/customers';
 import { Customer, CustomerCreate, CustomerUpdate } from '../../api/types';
@@ -10,7 +10,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Search, Edit2, Mail, Phone, MapPin, Trash2, RotateCcw } from 'lucide-react';
+import { Plus, Search, Edit2, Mail, Phone, MapPin, Trash2, RotateCcw, Users, CheckCircle, XCircle } from 'lucide-react';
 
 export const Customers = () => {
   const [search, setSearch] = useState('');
@@ -30,6 +30,12 @@ export const Customers = () => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
 
+  // Fetch all customers for statistics (without filters)
+  const { data: allCustomers = [], isLoading: isLoadingStats } = useQuery({
+    queryKey: ['customers-stats'],
+    queryFn: () => customersApi.list({ limit: 1000 }),
+  });
+
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ['customers', search, statusFilter],
     queryFn: () => customersApi.list({ 
@@ -38,6 +44,14 @@ export const Customers = () => {
       limit: 100 
     }),
   });
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    const total = allCustomers.length;
+    const active = allCustomers.filter((c) => c.status === 'active').length;
+    const terminated = allCustomers.filter((c) => c.status === 'terminated').length;
+    return { total, active, terminated };
+  }, [allCustomers]);
 
   const createMutation = useMutation({
     mutationFn: customersApi.create,
@@ -180,6 +194,55 @@ export const Customers = () => {
           <Plus className="h-4 w-4 mr-2" />
           Add Customer
         </Button>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Total Customers</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {isLoadingStats ? '...' : stats.total}
+                </p>
+              </div>
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Active Users</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {isLoadingStats ? '...' : stats.active}
+                </p>
+              </div>
+              <div className="bg-green-50 p-3 rounded-lg">
+                <CheckCircle className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Terminated Users</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {isLoadingStats ? '...' : stats.terminated}
+                </p>
+              </div>
+              <div className="bg-red-50 p-3 rounded-lg">
+                <XCircle className="h-6 w-6 text-red-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Search and Filter */}
