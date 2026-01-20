@@ -254,43 +254,6 @@ export const Subscriptions = () => {
         </Button>
       </div>
 
-      {/* Search and Filter */}
-      {!isLoading && subscriptions.length > 0 && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  placeholder="Search by username, customer name, package, or IP address..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="w-full sm:w-48">
-                <Select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="">All Statuses</option>
-                  <option value="active">Active</option>
-                  <option value="pending">Pending</option>
-                  <option value="suspended">Suspended</option>
-                  <option value="expired">Expired</option>
-                  <option value="terminated">Terminated</option>
-                </Select>
-              </div>
-            </div>
-            {filteredSubscriptions.length !== subscriptions.length && (
-              <p className="text-sm text-gray-500 mt-3">
-                Showing {filteredSubscriptions.length} of {subscriptions.length} subscriptions
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
       {/* Analytics Cards */}
       {!isLoading && subscriptions.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -378,6 +341,43 @@ export const Subscriptions = () => {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Search and Filter */}
+      {!isLoading && subscriptions.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  placeholder="Search by username, customer name, package, or IP address..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="w-full sm:w-48">
+                <Select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="active">Active</option>
+                  <option value="pending">Pending</option>
+                  <option value="suspended">Suspended</option>
+                  <option value="expired">Expired</option>
+                  <option value="terminated">Terminated</option>
+                </Select>
+              </div>
+            </div>
+            {filteredSubscriptions.length !== subscriptions.length && (
+              <p className="text-sm text-gray-500 mt-3">
+                Showing {filteredSubscriptions.length} of {subscriptions.length} subscriptions
+              </p>
+            )}
+          </CardContent>
+        </Card>
       )}
 
       {/* Subscriptions List */}
