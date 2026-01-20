@@ -9,12 +9,13 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../components/ui/toast';
-import { Plus, Search, Edit2, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Edit2, Mail, Phone, MapPin, Trash2 } from 'lucide-react';
 
 export const Customers = () => {
   const [search, setSearch] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [terminatingCustomer, setTerminatingCustomer] = useState<Customer | null>(null);
   const [formData, setFormData] = useState<CustomerCreate>({
     first_name: '',
     last_name: '',
@@ -63,6 +64,22 @@ export const Customers = () => {
         variant: 'destructive',
         title: 'Error',
         description: error.response?.data?.message || 'Failed to update customer',
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => customersApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      setTerminatingCustomer(null);
+      addToast({ title: 'Success', description: 'Customer terminated successfully' });
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to terminate customer',
       });
     },
   });
@@ -212,16 +229,27 @@ export const Customers = () => {
                     </div>
                   )}
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-gray-200 flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full"
+                    className="flex-1"
                     onClick={() => startEdit(customer)}
                   >
                     <Edit2 className="h-4 w-4 mr-2" />
                     Edit
                   </Button>
+                  {customer.status !== 'terminated' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => setTerminatingCustomer(customer)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Terminate
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -370,6 +398,42 @@ export const Customers = () => {
             </Button>
             <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
               {updateMutation.isPending ? 'Updating...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Terminate Confirmation Dialog */}
+      <Dialog open={!!terminatingCustomer} onOpenChange={(open) => !open && setTerminatingCustomer(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Terminate Customer</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Are you sure you want to terminate the customer{' '}
+              <strong>
+                {terminatingCustomer?.first_name} {terminatingCustomer?.last_name}
+              </strong>? This action cannot be undone.
+            </p>
+            <p className="text-sm text-gray-500">
+              The customer will be marked as terminated and will no longer be able to access services.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTerminatingCustomer(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (terminatingCustomer) {
+                  deleteMutation.mutate(terminatingCustomer.id);
+                }
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Terminating...' : 'Terminate Customer'}
             </Button>
           </DialogFooter>
         </DialogContent>
