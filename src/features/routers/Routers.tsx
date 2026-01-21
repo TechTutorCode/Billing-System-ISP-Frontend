@@ -9,12 +9,13 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { useToast } from '../../components/ui/toast';
-import { Wifi, WifiOff, Server, Clock, Plus, Edit2, Copy, Check, Search, Trash2 } from 'lucide-react';
+import { Wifi, WifiOff, Server, Clock, Plus, Edit2, Copy, Check, Search, Trash2, FileText } from 'lucide-react';
 
 export const Routers = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingRouter, setEditingRouter] = useState<Router | null>(null);
   const [deletingRouter, setDeletingRouter] = useState<Router | null>(null);
+  const [viewingConfigRouter, setViewingConfigRouter] = useState<Router | null>(null);
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [createFormData, setCreateFormData] = useState<RouterCreate>({
@@ -90,6 +91,21 @@ export const Routers = () => {
     },
   });
 
+  const configMutation = useMutation({
+    mutationFn: (id: string) => routersApi.getConfig(id),
+    onSuccess: (response) => {
+      setOpenvpnConfig(response.openvpn_config);
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to retrieve router configuration. Configuration can only be retrieved immediately after router creation.',
+      });
+      setViewingConfigRouter(null);
+    },
+  });
+
   const resetCreateForm = () => {
     setCreateFormData({
       name: '',
@@ -141,6 +157,11 @@ export const Routers = () => {
       setTimeout(() => setCopiedConfig(null), 2000);
       addToast({ title: 'Success', description: 'OpenVPN config copied to clipboard' });
     }
+  };
+
+  const handleViewConfig = (router: Router) => {
+    setViewingConfigRouter(router);
+    configMutation.mutate(router.id);
   };
 
   // Filter and sort routers
@@ -280,6 +301,15 @@ export const Routers = () => {
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={() => handleViewConfig(router)}
+                    disabled={configMutation.isPending}
+                    title="View OpenVPN Configuration"
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     onClick={() => setDeletingRouter(router)}
                   >
@@ -344,43 +374,63 @@ export const Routers = () => {
       </Dialog>
 
       {/* OpenVPN Config Dialog */}
-      <Dialog open={!!openvpnConfig} onOpenChange={(open) => !open && setOpenvpnConfig(null)}>
+      <Dialog 
+        open={!!openvpnConfig} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setOpenvpnConfig(null);
+            setViewingConfigRouter(null);
+          }
+        }}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Router Created Successfully</DialogTitle>
+            <DialogTitle>
+              {viewingConfigRouter ? `OpenVPN Configuration - ${viewingConfigRouter.name}` : 'Router Created Successfully'}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Your router has been created. Copy the OpenVPN configuration below and use it to configure your MikroTik router.
-            </p>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>OpenVPN Configuration</Label>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={copyConfig}
-                  className="flex items-center gap-2"
-                >
-                  {copiedConfig === openvpnConfig ? (
-                    <>
-                      <Check className="h-4 w-4" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </>
-                  )}
-                </Button>
+            {configMutation.isPending ? (
+              <div className="text-center py-8 text-gray-500">
+                Loading configuration...
               </div>
-              <textarea
-                readOnly
-                value={openvpnConfig || ''}
-                className="w-full h-64 p-3 border border-gray-300 rounded-lg font-mono text-xs bg-gray-50 resize-none"
-              />
-            </div>
+            ) : (
+              <>
+                <p className="text-sm text-gray-600">
+                  {viewingConfigRouter 
+                    ? 'Copy the OpenVPN configuration below and use it to configure your MikroTik router.'
+                    : 'Your router has been created. Copy the OpenVPN configuration below and use it to configure your MikroTik router.'}
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>OpenVPN Configuration</Label>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={copyConfig}
+                      className="flex items-center gap-2"
+                    >
+                      {copiedConfig === openvpnConfig ? (
+                        <>
+                          <Check className="h-4 w-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4" />
+                          Copy
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <textarea
+                    readOnly
+                    value={openvpnConfig || ''}
+                    className="w-full h-64 p-3 border border-gray-300 rounded-lg font-mono text-xs bg-gray-50 resize-none"
+                  />
+                </div>
+              </>
+            )}
           </div>
           <DialogFooter>
             <Button onClick={() => setOpenvpnConfig(null)}>Close</Button>

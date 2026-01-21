@@ -1,5 +1,5 @@
 import apiClient from './client';
-import { Router, RouterStatusHistory, RouterCreate, RouterUpdate, RouterCreateResponse } from './types';
+import { Router, RouterStatusHistory, RouterCreate, RouterUpdate, RouterCreateResponse, RouterConfigResponse } from './types';
 
 export const routersApi = {
   list: async (): Promise<Router[]> => {
@@ -33,5 +33,10 @@ export const routersApi = {
 
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(`/api/routers/${id}`);
+  },
+
+  getConfig: async (id: string): Promise<RouterConfigResponse> => {
+    const response = await apiClient.get<RouterConfigResponse>(`/api/routers/${id}/config`);
+    return response.data;
   },
 };

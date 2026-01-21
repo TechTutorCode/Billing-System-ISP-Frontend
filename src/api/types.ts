@@ -170,6 +170,12 @@ export interface RouterCreateResponse {
   openvpn_config: string;
 }
 
+export interface RouterConfigResponse {
+  status_code: number;
+  message: string;
+  openvpn_config: string;
+}
+
 export interface RouterStatusHistory {
   id: string;
   router_id: string;
