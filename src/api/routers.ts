@@ -30,4 +30,8 @@ export const routersApi = {
     );
     return response.data;
   },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/api/routers/${id}`);
+  },
 };

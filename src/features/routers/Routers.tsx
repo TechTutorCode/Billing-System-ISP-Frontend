@@ -9,11 +9,12 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { useToast } from '../../components/ui/toast';
-import { Wifi, WifiOff, Server, Clock, Plus, Edit2, Copy, Check, Search } from 'lucide-react';
+import { Wifi, WifiOff, Server, Clock, Plus, Edit2, Copy, Check, Search, Trash2 } from 'lucide-react';
 
 export const Routers = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingRouter, setEditingRouter] = useState<Router | null>(null);
+  const [deletingRouter, setDeletingRouter] = useState<Router | null>(null);
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [createFormData, setCreateFormData] = useState<RouterCreate>({
@@ -69,6 +70,22 @@ export const Routers = () => {
         variant: 'destructive',
         title: 'Error',
         description: error.response?.data?.message || 'Failed to update router',
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => routersApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['routers'] });
+      setDeletingRouter(null);
+      addToast({ title: 'Success', description: 'Router deleted successfully' });
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to delete router',
       });
     },
   });
@@ -250,15 +267,25 @@ export const Routers = () => {
                     </div>
                   )}
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => startEdit(router)}
-                >
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  Edit Router
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => startEdit(router)}
+                  >
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => setDeletingRouter(router)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -419,6 +446,33 @@ export const Routers = () => {
             </Button>
             <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
               {updateMutation.isPending ? 'Updating...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deletingRouter} onOpenChange={(open) => !open && setDeletingRouter(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Router</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Are you sure you want to delete <strong>{deletingRouter?.name}</strong>? This action
+              will remove the router and its VPN user. This action cannot be undone.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingRouter(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => deletingRouter && deleteMutation.mutate(deletingRouter.id)}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete Router'}
             </Button>
           </DialogFooter>
         </DialogContent>
