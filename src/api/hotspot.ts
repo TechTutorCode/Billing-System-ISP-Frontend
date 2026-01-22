@@ -62,14 +62,27 @@ export interface HotspotUser {
   status: 'active' | 'expired' | 'suspended';
 }
 
-export interface HotspotPackageAdmin extends HotspotPackage {
+// Hotspot package admin types (matches backend schema)
+export interface HotspotPackageCreate {
+  name: string;
+  download_speed: number; // in Kbps
+  upload_speed: number; // in Kbps
+  validity_minutes: number;
+  shared_users?: number; // default 1
   router_id: string;
-  router_name?: string;
-  package_type_id: string;
-  mikrotik_synced: boolean;
-  mikrotik_synced_at: string | null;
+}
+
+export interface HotspotPackageAdmin {
+  id: number;
+  name: string;
+  download_speed: number; // in Kbps
+  upload_speed: number; // in Kbps
+  validity_minutes: number;
+  shared_users: number;
+  router_id: string;
+  mikrotik_profile_name: string | null;
+  is_active: boolean;
   created_at: string;
-  updated_at: string;
 }
 
 // Create a separate client for hotspot portal (no auth required)
@@ -127,9 +140,15 @@ export const hotspotApi = {
 
 // Admin API methods (require authentication)
 export const hotspotAdminApi = {
-  // Get all hotspot packages (admin view with router info)
+  // Get all hotspot packages (admin view)
   getHotspotPackages: async (): Promise<HotspotPackageAdmin[]> => {
-    const response = await apiClient.get<HotspotPackageAdmin[]>('/api/packages/hotspot');
+    const response = await apiClient.get<HotspotPackageAdmin[]>('/api/hotspot/packages');
+    return response.data;
+  },
+
+  // Create hotspot package
+  createHotspotPackage: async (data: HotspotPackageCreate): Promise<HotspotPackageAdmin> => {
+    const response = await apiClient.post<HotspotPackageAdmin>('/api/hotspot/packages', data);
     return response.data;
   },
 
