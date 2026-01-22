@@ -15,7 +15,6 @@ import {
   Lock,
   TrendingUp,
   FileText,
-  Smartphone as MobileIcon,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
