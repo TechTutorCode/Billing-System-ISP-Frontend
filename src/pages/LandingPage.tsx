@@ -15,118 +15,199 @@ import {
   Lock,
   TrendingUp,
   FileText,
+  Sparkles,
+  Menu,
+  X,
+  Star,
+  Play,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useState } from 'react';
 
 export const LandingPage = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const features = [
     {
       icon: Wifi,
       title: 'Hotspot Management',
       description: 'Complete hotspot configuration and management with MikroTik integration, MAC-based vouchers, and customizable captive portals.',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       icon: Smartphone,
       title: 'Mobile App Ready',
       description: 'Manage your ISP operations on the go. Monitor network status, manage accounts, and handle billing from anywhere.',
+      color: 'from-purple-500 to-pink-500',
     },
     {
       icon: Shield,
       title: 'Security First',
       description: 'Ensure user privacy and network integrity with SSL, secure token-based authentication, IP binding, and RADIUS integration.',
+      color: 'from-green-500 to-emerald-500',
     },
     {
       icon: CreditCard,
       title: 'Real-time Payments',
       description: 'Enable instant top-ups and package purchases via M-Pesa, card payments, or vouchers with automatic activation.',
+      color: 'from-orange-500 to-red-500',
     },
     {
       icon: BarChart3,
       title: 'Analytics Dashboard',
       description: 'Track revenue across multiple locations, monitor payment trends, and make data-driven business decisions.',
+      color: 'from-indigo-500 to-purple-500',
     },
     {
       icon: Settings,
       title: 'Router Management',
       description: 'Effortlessly manage MikroTik or other router configurations remotely with bandwidth shaping and session rules.',
+      color: 'from-teal-500 to-blue-500',
     },
   ];
 
   const paymentProviders = [
-    { name: 'M-Pesa', logo: 'M-Pesa' },
-    { name: 'Paystack', logo: 'Paystack' },
-    { name: 'Flutterwave', logo: 'Flutterwave' },
-    { name: 'ClickPesa', logo: 'ClickPesa' },
+    { name: 'M-Pesa', color: 'bg-green-600' },
+    { name: 'Paystack', color: 'bg-blue-600' },
+    { name: 'Flutterwave', color: 'bg-purple-600' },
+    { name: 'ClickPesa', color: 'bg-orange-600' },
+  ];
+
+  const stats = [
+    { value: '1000+', label: 'Active ISPs' },
+    { value: '50K+', label: 'Managed Devices' },
+    { value: '99.9%', label: 'Uptime' },
+    { value: '24/7', label: 'Support' },
   ];
 
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                <Wifi className="h-6 w-6 text-white" />
+          <div className="flex items-center justify-between h-20">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="p-2.5 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
+                <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">ISP Billing</span>
-            </div>
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  ISP Billing
+                </span>
+                <p className="text-xs text-gray-500 -mt-1">Management System</p>
+              </div>
+            </Link>
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#features" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Features
               </a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
-                Pricing
+              <a href="#solutions" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Solutions
               </a>
-              <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="#about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 About
               </a>
               <Link to="/dashboard/login">
-                <Button variant="outline">Sign In</Button>
+                <Button variant="outline" className="font-medium">Sign In</Button>
+              </Link>
+              <Link to="/dashboard/login">
+                <Button className="font-medium shadow-md hover:shadow-lg transition-shadow">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </Link>
             </div>
+            <button
+              className="md:hidden p-2 text-gray-700"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-3">
+            <a href="#features" className="block text-gray-700 hover:text-blue-600 font-medium py-2">
+              Features
+            </a>
+            <a href="#solutions" className="block text-gray-700 hover:text-blue-600 font-medium py-2">
+              Solutions
+            </a>
+            <a href="#about" className="block text-gray-700 hover:text-blue-600 font-medium py-2">
+              About
+            </a>
+            <Link to="/dashboard/login" className="block">
+              <Button variant="outline" className="w-full font-medium">Sign In</Button>
+            </Link>
+            <Link to="/dashboard/login" className="block">
+              <Button className="w-full font-medium">Get Started</Button>
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Scale billing & network operations
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              with ISP Billing System
-            </span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            The most complete billing system with Wireless and PPPoE support, custom user portals,
-            self-service capabilities, hotspot roaming, and other enterprise-grade features.
-            It's fit for any ISP—whether small, medium, or large enterprise.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/dashboard/login">
-              <Button size="lg" className="text-lg px-8 py-6">
-                Get Started Today
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <a href="#features">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                View Features
-              </Button>
-            </a>
+      <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 -z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] -z-10" />
+        
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
+              <Star className="h-4 w-4 fill-blue-600" />
+              <span>Trusted by thousands of ISPs across Africa</span>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
+              Scale billing & network
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                operations effortlessly
+              </span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+              The most complete billing system with Wireless and PPPoE support, custom user portals,
+              self-service capabilities, hotspot roaming, and enterprise-grade features.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Link to="/dashboard/login">
+                <Button size="lg" className="text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl transition-all">
+                  Get Started Today
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <a href="#features">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto border-2">
+                  <Play className="mr-2 h-5 w-5" />
+                  Watch Demo
+                </Button>
+              </a>
+            </div>
+            
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mt-16">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="text-sm text-gray-500 mt-6">Trusted by thousands of ISPs across Africa</p>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="features" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">What makes us different?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              What makes us different?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               ISP Billing System is designed with the unique needs of Internet Service Providers in mind.
               It combines powerful billing and network management tools into a single platform.
             </p>
@@ -138,13 +219,16 @@ export const LandingPage = () => {
               return (
                 <div
                   key={index}
-                  className="p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-blue-300"
+                  className="group relative p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-blue-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                 >
-                  <div className="bg-gradient-to-br from-blue-500 to-purple-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className={`bg-gradient-to-br ${feature.color} w-14 h-14 rounded-xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <Icon className="h-7 w-7 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <div className="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowRight className="h-5 w-5 text-blue-600" />
+                  </div>
                 </div>
               );
             })}
@@ -153,11 +237,13 @@ export const LandingPage = () => {
       </section>
 
       {/* Payment Integrations */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Integrated Payment Gateways</h2>
-            <p className="text-xl text-gray-600">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Integrated Payment Gateways
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Accept payments seamlessly with our integrated payment gateway solutions
             </p>
           </div>
@@ -165,9 +251,9 @@ export const LandingPage = () => {
             {paymentProviders.map((provider, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow text-center"
+                className={`${provider.color} p-8 rounded-2xl text-white text-center shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300`}
               >
-                <div className="text-2xl font-bold text-gray-700">{provider.logo}</div>
+                <div className="text-2xl font-bold">{provider.name}</div>
               </div>
             ))}
           </div>
@@ -175,41 +261,43 @@ export const LandingPage = () => {
       </section>
 
       {/* Edge Infrastructure */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Edge Computing for Maximum Performance</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Edge Computing for Maximum Performance
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Deploy critical services at the edge, close to your network infrastructure,
               ensuring minimal latency and the best experience for your customers
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="h-8 w-8 text-blue-600" />
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-100 hover:shadow-xl transition-shadow">
+              <div className="bg-gradient-to-br from-blue-500 to-cyan-500 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Zap className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Reduced Latency</h3>
-              <p className="text-gray-600">
-                Deploy services at the edge, close to your network infrastructure, minimizing round-trip times.
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Reduced Latency</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Deploy services at the edge, close to your network infrastructure, minimizing round-trip times and providing instant authentication responses.
               </p>
             </div>
-            <div className="text-center p-6">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Lock className="h-8 w-8 text-green-600" />
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-100 hover:shadow-xl transition-shadow">
+              <div className="bg-gradient-to-br from-green-500 to-emerald-500 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Lock className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Enhanced Security</h3>
-              <p className="text-gray-600">
-                Keep sensitive authentication services within your network perimeter, reducing exposure.
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Enhanced Security</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Keep sensitive authentication and access control services within your network perimeter, reducing exposure to external threats.
               </p>
             </div>
-            <div className="text-center p-6">
-              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Server className="h-8 w-8 text-purple-600" />
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-100 hover:shadow-xl transition-shadow">
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Server className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Better Reliability</h3>
-              <p className="text-gray-600">
-                Local deployment ensures your services remain operational even if external connectivity is disrupted.
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Better Reliability</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Local deployment ensures your services remain operational even if external connectivity is disrupted, keeping your customers connected.
               </p>
             </div>
           </div>
@@ -217,51 +305,65 @@ export const LandingPage = () => {
       </section>
 
       {/* Billing & Analytics */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Complete Billing System with Real-time Revenue Insights
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-xl text-blue-100 mb-8 leading-relaxed">
                 Automate your entire billing process from subscription management to invoice generation.
                 Track revenue across multiple locations, monitor payment trends, and make data-driven business decisions.
               </p>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+              <ul className="space-y-5">
+                <li className="flex items-start gap-4">
+                  <div className="bg-white/20 p-2 rounded-lg">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Automated Invoicing</h4>
-                    <p className="text-gray-600">Generate and send invoices automatically based on customer plans</p>
+                    <h4 className="font-bold text-lg mb-1">Automated Invoicing</h4>
+                    <p className="text-blue-100">Generate and send invoices automatically based on customer plans</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <li className="flex items-start gap-4">
+                  <div className="bg-white/20 p-2 rounded-lg">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Revenue Analytics</h4>
-                    <p className="text-gray-600">Visualize revenue trends, customer growth, and business performance</p>
+                    <h4 className="font-bold text-lg mb-1">Revenue Analytics</h4>
+                    <p className="text-blue-100">Visualize revenue trends, customer growth, and business performance</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <li className="flex items-start gap-4">
+                  <div className="bg-white/20 p-2 rounded-lg">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Multi-location Tracking</h4>
-                    <p className="text-gray-600">Monitor activity and engagement across all your service locations</p>
+                    <h4 className="font-bold text-lg mb-1">Multi-location Tracking</h4>
+                    <p className="text-blue-100">Monitor activity and engagement across all your service locations</p>
                   </div>
                 </li>
               </ul>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-xl border border-gray-200">
-              <div className="space-y-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg mt-6"></div>
+            <div className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl">
+              <div className="bg-white rounded-2xl p-6 space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div className="h-4 bg-gradient-to-r from-blue-200 to-purple-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded w-full"></div>
+                <div className="h-4 bg-gradient-to-r from-pink-200 to-blue-200 rounded w-5/6"></div>
+                <div className="h-48 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 rounded-xl mt-6 flex items-center justify-center">
+                  <BarChart3 className="h-16 w-16 text-blue-400" />
+                </div>
                 <div className="grid grid-cols-3 gap-4 mt-6">
-                  <div className="h-20 bg-blue-50 rounded"></div>
-                  <div className="h-20 bg-purple-50 rounded"></div>
-                  <div className="h-20 bg-indigo-50 rounded"></div>
+                  <div className="h-24 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl"></div>
+                  <div className="h-24 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl"></div>
+                  <div className="h-24 bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl"></div>
                 </div>
               </div>
             </div>
@@ -270,68 +372,65 @@ export const LandingPage = () => {
       </section>
 
       {/* Device Management */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-xl order-2 lg:order-1">
-              <div className="space-y-4">
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                      <div className="h-2 bg-gray-100 rounded w-32"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-3xl border-2 border-gray-200 shadow-xl">
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
+                          i === 1 ? 'from-blue-500 to-cyan-500' :
+                          i === 2 ? 'from-green-500 to-emerald-500' :
+                          'from-purple-500 to-pink-500'
+                        } shadow-lg`}></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded-lg w-32 mb-2"></div>
+                          <div className="h-3 bg-gray-100 rounded-lg w-24"></div>
+                        </div>
+                        <div className="w-16 h-8 bg-green-100 rounded-lg"></div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-green-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                      <div className="h-2 bg-gray-100 rounded w-32"></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-purple-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                      <div className="h-2 bg-gray-100 rounded w-32"></div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
             <div className="order-1 lg:order-2">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Advanced Device Management
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 Securely manage and monitor all customer devices. Control access, track bandwidth usage,
                 and ensure network security with our powerful device management tools.
               </p>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+              <ul className="space-y-6">
+                <li className="flex items-start gap-4">
+                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 p-3 rounded-xl shadow-lg">
+                    <Server className="h-6 w-6 text-white" />
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">WireGuard Integration</h4>
-                    <p className="text-gray-600">Secure VPN connections with modern WireGuard protocol</p>
+                    <h4 className="font-bold text-xl text-gray-900 mb-2">WireGuard Integration</h4>
+                    <p className="text-gray-600 leading-relaxed">Secure VPN connections with modern WireGuard protocol</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <li className="flex items-start gap-4">
+                  <div className="bg-gradient-to-br from-green-500 to-emerald-500 p-3 rounded-xl shadow-lg">
+                    <BarChart3 className="h-6 w-6 text-white" />
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Bandwidth Monitoring</h4>
-                    <p className="text-gray-600">Real-time bandwidth tracking and usage analytics per device</p>
+                    <h4 className="font-bold text-xl text-gray-900 mb-2">Bandwidth Monitoring</h4>
+                    <p className="text-gray-600 leading-relaxed">Real-time bandwidth tracking and usage analytics per device</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <li className="flex items-start gap-4">
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-xl shadow-lg">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Device Authentication</h4>
-                    <p className="text-gray-600">Secure device onboarding with MAC binding and token auth</p>
+                    <h4 className="font-bold text-xl text-gray-900 mb-2">Device Authentication</h4>
+                    <p className="text-gray-600 leading-relaxed">Secure device onboarding with MAC binding and token auth</p>
                   </div>
                 </li>
               </ul>
@@ -341,89 +440,94 @@ export const LandingPage = () => {
       </section>
 
       {/* Branding & Customization */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Custom Branded Hotspot Captive Portal</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Custom Branded Hotspot Captive Portal
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Create a professional first impression with fully customizable captive portals.
               Add your logo, colors, and branding to deliver a seamless customer experience.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-              <div className="bg-gradient-to-br from-blue-500 to-purple-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Globe className="h-8 w-8 text-white" />
+            <div className="bg-white p-8 rounded-2xl border-2 border-gray-100 text-center hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="bg-gradient-to-br from-blue-500 to-cyan-500 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Globe className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Full Branding Control</h3>
-              <p className="text-gray-600">Customize logos, colors, and messaging for your captive portal</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Full Branding Control</h3>
+              <p className="text-gray-600 leading-relaxed">Customize logos, colors, and messaging for your captive portal</p>
             </div>
-            <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-              <div className="bg-gradient-to-br from-green-500 to-teal-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Wifi className="h-8 w-8 text-white" />
+            <div className="bg-white p-8 rounded-2xl border-2 border-gray-100 text-center hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="bg-gradient-to-br from-green-500 to-teal-500 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Wifi className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Hotspot Management</h3>
-              <p className="text-gray-600">Configure and manage multiple hotspots from one dashboard</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Hotspot Management</h3>
+              <p className="text-gray-600 leading-relaxed">Configure and manage multiple hotspots from one dashboard</p>
             </div>
-            <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-white" />
+            <div className="bg-white p-8 rounded-2xl border-2 border-gray-100 text-center hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Users className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Customer Engagement</h3>
-              <p className="text-gray-600">Retain users with branded authentication experiences</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Customer Engagement</h3>
+              <p className="text-gray-600 leading-relaxed">Retain users with branded authentication experiences</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Reports & Analytics */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Comprehensive Business Reports & Performance Metrics</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Comprehensive Business Reports & Performance Metrics
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Get detailed insights into your business performance with comprehensive reports covering revenue,
               customer engagement, network usage, and payment trends.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
-              <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                <TrendingUp className="h-6 w-6 text-blue-600" />
+            <div className="p-8 rounded-2xl border-2 border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="bg-gradient-to-br from-blue-500 to-cyan-500 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+                <TrendingUp className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Revenue Reports</h3>
-              <p className="text-gray-600">Track income, expenses, and profit margins across all locations</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Revenue Reports</h3>
+              <p className="text-gray-600 leading-relaxed">Track income, expenses, and profit margins across all locations</p>
             </div>
-            <div className="p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
-              <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 text-green-600" />
+            <div className="p-8 rounded-2xl border-2 border-gray-100 hover:border-green-200 hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="bg-gradient-to-br from-green-500 to-emerald-500 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+                <Users className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Customer Analytics</h3>
-              <p className="text-gray-600">Monitor customer growth, churn rates, and engagement metrics</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Customer Analytics</h3>
+              <p className="text-gray-600 leading-relaxed">Monitor customer growth, churn rates, and engagement metrics</p>
             </div>
-            <div className="p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
-              <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                <FileText className="h-6 w-6 text-purple-600" />
+            <div className="p-8 rounded-2xl border-2 border-gray-100 hover:border-purple-200 hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+                <FileText className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Exportable Data</h3>
-              <p className="text-gray-600">Export reports in PDF, Excel, or CSV for further analysis</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Exportable Data</h3>
+              <p className="text-gray-600 leading-relaxed">Export reports in PDF, Excel, or CSV for further analysis</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-6">
             Helping ISPs scale Operations
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed">
             Join thousands of satisfied customers who have transformed their billing and network operations.
             Our platform is designed to help you scale your business efficiently and effectively.
           </p>
           <Link to="/dashboard/login">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
+            <Button size="lg" variant="secondary" className="text-lg px-10 py-7 h-auto shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all">
               Get Started Today
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -432,46 +536,46 @@ export const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-gray-900 text-gray-300 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg">
-                  <Wifi className="h-5 w-5 text-white" />
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2.5 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl">
+                  <Sparkles className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-lg font-bold text-white">ISP Billing</span>
+                <span className="text-2xl font-bold text-white">ISP Billing</span>
               </div>
-              <p className="text-sm text-gray-400">
+              <p className="text-gray-400 leading-relaxed">
                 Making ISP management easy and efficient for customers.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-bold text-white mb-4 text-lg">Quick Links</h4>
+              <ul className="space-y-3 text-sm">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#solutions" className="hover:text-white transition-colors">Solutions</a></li>
                 <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
                 <li><Link to="/dashboard/login" className="hover:text-white transition-colors">Sign In</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Support</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-bold text-white mb-4 text-lg">Support</h4>
+              <ul className="space-y-3 text-sm">
                 <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">System Status</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-bold text-white mb-4 text-lg">Legal</h4>
+              <ul className="space-y-3 text-sm">
                 <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+          <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
             <p>Copyright © {new Date().getFullYear()} ISP Billing System. All rights reserved.</p>
           </div>
         </div>
