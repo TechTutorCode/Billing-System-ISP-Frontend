@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { PackageSelector } from './PackageSelector';
 import { Button } from '../../../components/ui/button';

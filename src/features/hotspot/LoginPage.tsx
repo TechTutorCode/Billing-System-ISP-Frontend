@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { hotspotApi } from '../../api/hotspot';
-import { TemplateRenderer } from './components/TemplateRenderer';
 import { TemplateWithComponents } from './components/TemplateWithComponents';
 import { PackageSelector } from './components/PackageSelector';
 import { Button } from '../../components/ui/button';
@@ -45,7 +44,6 @@ const DEFAULT_TEMPLATE = `
 
 export const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   
   const macAddress = searchParams.get('mac') || '';
   const dst = searchParams.get('dst') || '';

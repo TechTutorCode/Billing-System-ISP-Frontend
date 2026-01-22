@@ -1,5 +1,4 @@
 import axios from 'axios';
-import apiClient from './client';
 
 // Hotspot-specific types
 export interface HotspotPackage {
