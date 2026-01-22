@@ -59,31 +59,31 @@ export function PricingSection() {
   ];
 
   return (
-    <div id="pricing" className="bg-gradient-to-b from-saas-darkGray to-saas-black">
+    <div id="pricing" className="bg-gradient-to-b from-gray-100 to-white dark:from-saas-darkGray dark:to-saas-black">
       <div className="section-container py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-white">
             Simple, <span className="gradient-text">Transparent</span> Pricing
           </h2>
-          <p className="text-gray-400 text-sm mb-8">
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-8">
             Choose the plan that fits your ISP. No hidden fees.
           </p>
 
           <div className="flex items-center justify-center space-x-4 mb-12">
-            <span className={`text-sm font-medium ${isAnnual ? 'text-saas-primary' : 'text-gray-400'}`}>
+            <span className={`text-sm font-medium ${isAnnual ? 'text-saas-primary' : 'text-gray-500 dark:text-gray-400'}`}>
               Annual <span className="text-xs text-saas-primary">(Save 20%)</span>
             </span>
             <button
               type="button"
               onClick={() => setIsAnnual(!isAnnual)}
-              className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${isAnnual ? 'bg-saas-primary' : 'bg-gray-600'}`}
+              className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${isAnnual ? 'bg-saas-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
               aria-label="Toggle annual / monthly"
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isAnnual ? 'translate-x-7' : 'translate-x-1'}`}
               />
             </button>
-            <span className={`text-sm font-medium ${!isAnnual ? 'text-saas-primary' : 'text-gray-400'}`}>
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-saas-primary' : 'text-gray-500 dark:text-gray-400'}`}>
               Monthly
             </span>
           </div>
@@ -95,8 +95,8 @@ export function PricingSection() {
               key={index}
               className={`rounded-2xl p-8 transition-all duration-300 ${
                 plan.isPopular
-                  ? 'bg-gradient-to-b from-saas-primary/20 to-saas-black border border-saas-primary/30 transform hover:-translate-y-2'
-                  : 'bg-saas-darkGray border border-gray-800 transform hover:-translate-y-1'
+                  ? 'bg-gradient-to-b from-saas-primary/15 to-white dark:from-saas-primary/20 dark:to-saas-black border border-saas-primary/40 dark:border-saas-primary/30 transform hover:-translate-y-2'
+                  : 'bg-white dark:bg-saas-darkGray border border-gray-200 dark:border-gray-800 transform hover:-translate-y-1 shadow-sm dark:shadow-none'
               }`}
             >
               {plan.isPopular && (
@@ -105,21 +105,21 @@ export function PricingSection() {
                 </span>
               )}
 
-              <h3 className="text-xl font-bold mb-2 text-white">{plan.name}</h3>
-              <p className="text-gray-400 text-sm mb-6">{plan.description}</p>
+              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{plan.name}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">{plan.description}</p>
 
               <div className="mb-6">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">
                   ${isAnnual ? plan.annualPrice : plan.monthlyPrice}
                 </span>
-                <span className="text-gray-400 text-sm"> /month</span>
+                <span className="text-gray-500 dark:text-gray-400 text-sm"> /month</span>
               </div>
 
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start">
                     <Check className="h-4 w-4 text-saas-primary mr-2 shrink-0 mt-0.5" />
-                    <span className="text-gray-300 text-sm">{feature}</span>
+                    <span className="text-gray-600 dark:text-gray-300 text-sm">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -127,7 +127,7 @@ export function PricingSection() {
               {plan.ctaText === 'Contact Sales' ? (
                 <a href="#contact" className="block">
                   <Button
-                    className="w-full bg-transparent border border-saas-primary/30 hover:border-saas-primary text-white text-sm py-2.5"
+                    className="w-full bg-transparent border border-saas-primary/50 dark:border-saas-primary/30 hover:border-saas-primary text-gray-900 dark:text-white text-sm py-2.5"
                   >
                     {plan.ctaText}
                   </Button>
@@ -138,7 +138,7 @@ export function PricingSection() {
                     className={`w-full text-sm py-2.5 ${
                       plan.isPopular
                         ? 'bg-saas-primary hover:bg-saas-primaryDark text-white border-0'
-                        : 'bg-transparent border border-saas-primary/30 hover:border-saas-primary text-white'
+                        : 'bg-transparent border border-saas-primary/50 dark:border-saas-primary/30 hover:border-saas-primary text-gray-900 dark:text-white'
                     }`}
                   >
                     {plan.ctaText}

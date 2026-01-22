@@ -3,18 +3,18 @@ import { Button } from '../ui/button';
 
 export function CtaSection() {
   return (
-    <div id="contact" className="bg-saas-darkGray">
+    <div id="contact" className="bg-gray-100 dark:bg-saas-darkGray">
       <div className="section-container py-16 md:py-20">
-        <div className="bg-gradient-to-r from-saas-primary/20 to-saas-primaryDark/20 rounded-2xl p-8 md:p-12 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-saas-primary/10 to-saas-primaryDark/10 dark:from-saas-primary/20 dark:to-saas-primaryDark/20 rounded-2xl p-8 md:p-12 relative overflow-hidden border border-saas-primary/20 dark:border-transparent">
           <div className="absolute top-0 right-0 w-64 h-64 bg-saas-primary opacity-20 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-saas-primaryDark opacity-10 rounded-full blur-3xl" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="md:w-2/3">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-white">
                 Ready to transform your ISP?
               </h2>
-              <p className="text-gray-300 text-sm mb-6 max-w-xl">
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 max-w-xl">
                 Join hundreds of operators using ISP Billing for hotspots, subscriptions, and payments. Start your free trial today.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -24,7 +24,7 @@ export function CtaSection() {
                   </Button>
                 </Link>
                 <a href="mailto:contact@example.com">
-                  <Button variant="outline" className="border-gray-400 text-white text-sm hover:bg-white hover:text-saas-black hover:border-white bg-transparent py-2.5 px-5">
+                  <Button variant="outline" className="border-gray-400 dark:border-gray-400 text-gray-900 dark:text-white text-sm hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-saas-black hover:border-gray-900 dark:hover:border-white bg-transparent py-2.5 px-5">
                     Contact Sales
                   </Button>
                 </a>

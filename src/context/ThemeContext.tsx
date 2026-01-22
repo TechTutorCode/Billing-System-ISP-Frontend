@@ -1,34 +1,40 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeContextProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+function readStoredTheme(): Theme {
+  if (typeof window === 'undefined') return 'light';
+  const stored = localStorage.getItem('theme');
+  return stored === 'dark' || stored === 'light' ? stored : 'light';
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') {
-      setTheme(stored);
-      if (stored === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } else {
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
-    }
+export function ThemeContextProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(readStoredTheme);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, []);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -21,13 +21,13 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <div className="bg-saas-black">
+    <div className="bg-white dark:bg-saas-black">
       <div className="section-container py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-white">
             Trusted by <span className="gradient-text">ISPs</span> Everywhere
           </h2>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
             See what operators say about our billing and hotspot platform.
           </p>
         </div>
@@ -36,7 +36,7 @@ export function TestimonialsSection() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-gradient-to-b from-saas-darkGray to-saas-black border border-gray-800 rounded-xl p-5 card-shadow"
+              className="bg-gray-50 dark:bg-gradient-to-b dark:from-saas-darkGray dark:to-saas-black border border-gray-200 dark:border-gray-800 rounded-xl p-5 card-shadow"
             >
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
@@ -52,17 +52,17 @@ export function TestimonialsSection() {
                 ))}
               </div>
 
-              <p className="text-gray-300 text-sm mb-4 italic">&ldquo;{testimonial.text}&rdquo;</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 italic">&ldquo;{testimonial.text}&rdquo;</p>
 
               <div className="flex items-center">
                 <img
                   src={testimonial.image}
                   alt={testimonial.author}
-                  className="w-10 h-10 rounded-full mr-3 object-cover"
+                  className="w-10 h-10 rounded-full mr-3 object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                 />
                 <div>
-                  <p className="font-semibold text-white text-sm">{testimonial.author}</p>
-                  <p className="text-gray-400 text-xs">{testimonial.position}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">{testimonial.author}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">{testimonial.position}</p>
                 </div>
               </div>
             </div>

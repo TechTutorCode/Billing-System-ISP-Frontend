@@ -35,13 +35,13 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <div id="features" className="bg-saas-black">
+    <div id="features" className="bg-white dark:bg-saas-black">
       <div className="section-container py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-white">
             Powerful <span className="gradient-text">Features</span> for Your ISP
           </h2>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
             Billing, hotspots, routers, and analytics in one platform. Scale your network and grow revenue.
           </p>
         </div>
@@ -50,13 +50,13 @@ export function FeaturesSection() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-saas-darkGray p-6 rounded-xl border border-gray-800 hover:border-saas-primary/50 transition-all duration-300 card-shadow"
+              className="bg-gray-50 dark:bg-saas-darkGray p-6 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-saas-primary/50 transition-all duration-300 card-shadow"
             >
               <div className="bg-saas-primary/10 w-10 h-10 flex items-center justify-center rounded-lg mb-3">
                 {feature.icon}
               </div>
-              <h3 className="text-lg font-semibold mb-2 text-white">{feature.title}</h3>
-              <p className="text-gray-400 text-sm">{feature.description}</p>
+              <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{feature.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">{feature.description}</p>
             </div>
           ))}
         </div>

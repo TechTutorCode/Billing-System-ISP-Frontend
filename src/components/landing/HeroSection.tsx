@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 
 export function HeroSection() {
   return (
-    <div className="relative bg-gradient-to-b from-saas-black to-[#1c160c] overflow-hidden min-h-[90vh] flex items-center">
+    <div className="relative bg-gradient-to-b from-gray-100 to-white dark:from-saas-black dark:to-[#1c160c] overflow-hidden min-h-[90vh] flex items-center">
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-saas-primary opacity-10 rounded-full blur-[100px]" />
       <div className="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-saas-primary opacity-15 rounded-full blur-[80px]" />
       <div className="absolute top-20 right-1/4 w-[250px] h-[250px] bg-saas-primary opacity-10 rounded-full blur-[70px]" />
@@ -23,7 +23,7 @@ export function HeroSection() {
               </span>
             </h1>
 
-            <p className="text-base md:text-lg mb-8 text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg mb-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Streamline operations, manage hotspots, and automate billing with our platform. MikroTik integration, M-Pesa, and real-time analytics. Built for ISPs.
             </p>
 
@@ -45,21 +45,21 @@ export function HeroSection() {
               <div className="flex -space-x-3">
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64"
-                  className="w-10 h-10 rounded-full border-2 border-saas-black object-cover"
+                  className="w-10 h-10 rounded-full border-2 border-white dark:border-saas-black object-cover shadow"
                   alt=""
                 />
                 <img
                   src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64"
-                  className="w-10 h-10 rounded-full border-2 border-saas-black object-cover"
+                  className="w-10 h-10 rounded-full border-2 border-white dark:border-saas-black object-cover shadow"
                   alt=""
                 />
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64"
-                  className="w-10 h-10 rounded-full border-2 border-saas-black object-cover"
+                  className="w-10 h-10 rounded-full border-2 border-white dark:border-saas-black object-cover shadow"
                   alt=""
                 />
               </div>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 <span className="font-semibold text-saas-primary">500+</span> ISPs already using our platform
               </p>
             </div>
@@ -68,7 +68,7 @@ export function HeroSection() {
           <div className="mt-16 animate-fade-in" style={{ animationDelay: '0.5s' }}>
             <div className="relative max-w-4xl mx-auto">
               <div className="absolute inset-0 bg-gradient-to-r from-saas-primary to-saas-primaryDark blur-xl opacity-20 rounded-xl" />
-              <div className="relative bg-saas-darkGray rounded-xl border border-saas-primary/20 p-2 card-shadow transform transition-all duration-500 hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(17,148,244,0.15)] hover:shadow-lg">
+              <div className="relative bg-white dark:bg-saas-darkGray rounded-xl border border-gray-200 dark:border-saas-primary/20 p-2 card-shadow transform transition-all duration-500 hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(17,148,244,0.15)] hover:shadow-lg">
                 <img
                   src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&h=600&q=80"
                   alt="Dashboard Preview"
@@ -83,8 +83,8 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-10 w-20 h-20 border border-saas-primary/20 rounded-full" />
-      <div className="absolute top-20 right-10 w-10 h-10 border border-saas-primary/20 rounded-full" />
+      <div className="absolute bottom-10 left-10 w-20 h-20 border border-gray-300 dark:border-saas-primary/20 rounded-full" />
+      <div className="absolute top-20 right-10 w-10 h-10 border border-gray-300 dark:border-saas-primary/20 rounded-full" />
       <div className="absolute top-40 left-20 w-5 h-5 bg-saas-primary/20 rounded-full" />
     </div>
   );
