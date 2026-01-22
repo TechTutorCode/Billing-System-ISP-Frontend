@@ -24,6 +24,40 @@ import {
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
 
+// Image component with fallback
+const DashboardImage = ({ 
+  src, 
+  alt, 
+  fallbackIcon: FallbackIcon, 
+  fallbackText 
+}: { 
+  src: string; 
+  alt: string; 
+  fallbackIcon: React.ComponentType<{ className?: string }>; 
+  fallbackText: string;
+}) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-gray-400">
+        <FallbackIcon className="h-16 w-16 mb-3" />
+        <p className="text-sm font-medium">{fallbackText}</p>
+        <p className="text-xs mt-1">Add {src.split('/').pop()} to /public/images/</p>
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={src} 
+      alt={alt}
+      className="w-full h-full object-cover"
+      onError={() => setHasError(true)}
+    />
+  );
+};
+
 export const LandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -197,6 +231,28 @@ export const LandingPage = () => {
               ))}
             </div>
           </div>
+          
+          {/* Hero Dashboard Screenshot */}
+          <div className="mt-20 max-w-6xl mx-auto">
+            <div className="relative rounded-3xl shadow-2xl border-8 border-white overflow-hidden bg-white">
+              <div className="flex items-center gap-2 bg-gray-100 px-4 py-3 border-b border-gray-200">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div className="ml-4 flex-1 bg-white rounded-lg px-4 py-1.5 text-sm text-gray-500">
+                  dashboard.example.com
+                </div>
+              </div>
+              <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                <DashboardImage 
+                  src="/images/dashboard-hero.png"
+                  alt="ISP Billing Dashboard Overview"
+                  fallbackIcon={BarChart3}
+                  fallbackText="Dashboard Screenshot"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -353,23 +409,128 @@ export const LandingPage = () => {
               </ul>
             </div>
             <div className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl">
-              <div className="bg-white rounded-2xl p-6 space-y-4">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <div className="bg-white rounded-2xl overflow-hidden shadow-xl">
+                <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 border-b border-gray-200">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
                 </div>
-                <div className="h-4 bg-gradient-to-r from-blue-200 to-purple-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded w-full"></div>
-                <div className="h-4 bg-gradient-to-r from-pink-200 to-blue-200 rounded w-5/6"></div>
-                <div className="h-48 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 rounded-xl mt-6 flex items-center justify-center">
-                  <BarChart3 className="h-16 w-16 text-blue-400" />
+                <div className="aspect-video bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+                  <DashboardImage 
+                    src="/images/dashboard-analytics.png"
+                    alt="Revenue Analytics Dashboard"
+                    fallbackIcon={BarChart3}
+                    fallbackText="Analytics Dashboard"
+                  />
                 </div>
-                <div className="grid grid-cols-3 gap-4 mt-6">
-                  <div className="h-24 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl"></div>
-                  <div className="h-24 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl"></div>
-                  <div className="h-24 bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl"></div>
-                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Dashboard Screenshots Showcase */}
+      <section id="solutions" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Powerful Dashboard at Your Fingertips
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Experience intuitive management with our comprehensive dashboard. Monitor everything from one place.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="rounded-2xl shadow-2xl border-4 border-white overflow-hidden bg-white">
+              <div className="flex items-center gap-2 bg-gray-100 px-4 py-3 border-b border-gray-200">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="ml-4 text-sm text-gray-600 font-medium">Customer Management</span>
+              </div>
+              <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+                <DashboardImage 
+                  src="/images/dashboard-customers.png"
+                  alt="Customer Management Dashboard"
+                  fallbackIcon={Users}
+                  fallbackText="Customer Dashboard"
+                />
+              </div>
+            </div>
+            
+            <div className="rounded-2xl shadow-2xl border-4 border-white overflow-hidden bg-white">
+              <div className="flex items-center gap-2 bg-gray-100 px-4 py-3 border-b border-gray-200">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="ml-4 text-sm text-gray-600 font-medium">Hotspot Management</span>
+              </div>
+              <div className="aspect-video bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+                <img 
+                  src="/images/dashboard-hotspot.png" 
+                  alt="Hotspot Management Dashboard"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    if (target.parentElement) {
+                      target.parentElement.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                          <Wifi class="h-16 w-16 mb-3" />
+                          <p class="text-sm font-medium">Hotspot Dashboard</p>
+                          <p class="text-xs mt-1">Add dashboard-hotspot.png</p>
+                        </div>
+                      `;
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            
+            <div className="rounded-2xl shadow-2xl border-4 border-white overflow-hidden bg-white">
+              <div className="flex items-center gap-2 bg-gray-100 px-4 py-3 border-b border-gray-200">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="ml-4 text-sm text-gray-600 font-medium">Package Management</span>
+              </div>
+              <div className="aspect-video bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+                <DashboardImage 
+                  src="/images/dashboard-packages.png"
+                  alt="Package Management Dashboard"
+                  fallbackIcon={Package}
+                  fallbackText="Package Dashboard"
+                />
+              </div>
+            </div>
+            
+            <div className="rounded-2xl shadow-2xl border-4 border-white overflow-hidden bg-white">
+              <div className="flex items-center gap-2 bg-gray-100 px-4 py-3 border-b border-gray-200">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="ml-4 text-sm text-gray-600 font-medium">Payment Analytics</span>
+              </div>
+              <div className="aspect-video bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
+                <img 
+                  src="/images/dashboard-payments.png" 
+                  alt="Payment Analytics Dashboard"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    if (target.parentElement) {
+                      target.parentElement.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                          <CreditCard class="h-16 w-16 mb-3" />
+                          <p class="text-sm font-medium">Payments Dashboard</p>
+                          <p class="text-xs mt-1">Add dashboard-payments.png</p>
+                        </div>
+                      `;
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -381,24 +542,20 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-3xl border-2 border-gray-200 shadow-xl">
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-white p-5 rounded-xl shadow-md border border-gray-100">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
-                          i === 1 ? 'from-blue-500 to-cyan-500' :
-                          i === 2 ? 'from-green-500 to-emerald-500' :
-                          'from-purple-500 to-pink-500'
-                        } shadow-lg`}></div>
-                        <div className="flex-1">
-                          <div className="h-4 bg-gray-200 rounded-lg w-32 mb-2"></div>
-                          <div className="h-3 bg-gray-100 rounded-lg w-24"></div>
-                        </div>
-                        <div className="w-16 h-8 bg-green-100 rounded-lg"></div>
-                      </div>
-                    </div>
-                  ))}
+              <div className="rounded-2xl shadow-2xl border-4 border-gray-200 overflow-hidden bg-white">
+                <div className="flex items-center gap-2 bg-gray-100 px-4 py-3 border-b border-gray-200">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="ml-4 text-sm text-gray-600 font-medium">Device Management</span>
+                </div>
+                <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                  <DashboardImage 
+                    src="/images/dashboard-devices.png"
+                    alt="Device Management Dashboard"
+                    fallbackIcon={Server}
+                    fallbackText="Device Dashboard"
+                  />
                 </div>
               </div>
             </div>
