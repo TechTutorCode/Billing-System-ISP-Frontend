@@ -12,7 +12,6 @@ import {
   Sparkles,
   Wifi,
   UserCheck,
-  ChevronDown,
   ChevronRight,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
