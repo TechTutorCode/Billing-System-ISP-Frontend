@@ -43,7 +43,7 @@ const DashboardImage = ({
       <div className="flex flex-col items-center justify-center h-full text-gray-400">
         <FallbackIcon className="h-16 w-16 mb-3" />
         <p className="text-sm font-medium">{fallbackText}</p>
-        <p className="text-xs mt-1">Add {src.split('/').pop()} to /public/images/</p>
+        <p className="text-xs mt-1">Loading image...</p>
       </div>
     );
   }
@@ -245,7 +245,7 @@ export const LandingPage = () => {
               </div>
               <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <DashboardImage 
-                  src="/images/dashboard-hero.png"
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80&auto=format&fit=crop"
                   alt="ISP Billing Dashboard Overview"
                   fallbackIcon={BarChart3}
                   fallbackText="Dashboard Screenshot"
@@ -417,7 +417,7 @@ export const LandingPage = () => {
                 </div>
                 <div className="aspect-video bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
                   <DashboardImage 
-                    src="/images/dashboard-analytics.png"
+                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80&auto=format&fit=crop"
                     alt="Revenue Analytics Dashboard"
                     fallbackIcon={BarChart3}
                     fallbackText="Analytics Dashboard"
@@ -451,7 +451,7 @@ export const LandingPage = () => {
               </div>
               <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
                 <DashboardImage 
-                  src="/images/dashboard-customers.png"
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80&auto=format&fit=crop"
                   alt="Customer Management Dashboard"
                   fallbackIcon={Users}
                   fallbackText="Customer Dashboard"
@@ -467,23 +467,11 @@ export const LandingPage = () => {
                 <span className="ml-4 text-sm text-gray-600 font-medium">Hotspot Management</span>
               </div>
               <div className="aspect-video bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-                <img 
-                  src="/images/dashboard-hotspot.png" 
+                <DashboardImage 
+                  src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1920&q=80&auto=format&fit=crop"
                   alt="Hotspot Management Dashboard"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    if (target.parentElement) {
-                      target.parentElement.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                          <Wifi class="h-16 w-16 mb-3" />
-                          <p class="text-sm font-medium">Hotspot Dashboard</p>
-                          <p class="text-xs mt-1">Add dashboard-hotspot.png</p>
-                        </div>
-                      `;
-                    }
-                  }}
+                  fallbackIcon={Wifi}
+                  fallbackText="Hotspot Dashboard"
                 />
               </div>
             </div>
@@ -497,7 +485,7 @@ export const LandingPage = () => {
               </div>
               <div className="aspect-video bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
                 <DashboardImage 
-                  src="/images/dashboard-packages.png"
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80&auto=format&fit=crop"
                   alt="Package Management Dashboard"
                   fallbackIcon={Package}
                   fallbackText="Package Dashboard"
@@ -513,23 +501,11 @@ export const LandingPage = () => {
                 <span className="ml-4 text-sm text-gray-600 font-medium">Payment Analytics</span>
               </div>
               <div className="aspect-video bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
-                <img 
-                  src="/images/dashboard-payments.png" 
+                <DashboardImage 
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80&auto=format&fit=crop"
                   alt="Payment Analytics Dashboard"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    if (target.parentElement) {
-                      target.parentElement.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                          <CreditCard class="h-16 w-16 mb-3" />
-                          <p class="text-sm font-medium">Payments Dashboard</p>
-                          <p class="text-xs mt-1">Add dashboard-payments.png</p>
-                        </div>
-                      `;
-                    }
-                  }}
+                  fallbackIcon={CreditCard}
+                  fallbackText="Payments Dashboard"
                 />
               </div>
             </div>
@@ -551,7 +527,7 @@ export const LandingPage = () => {
                 </div>
                 <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                   <DashboardImage 
-                    src="/images/dashboard-devices.png"
+                    src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1920&q=80&auto=format&fit=crop"
                     alt="Device Management Dashboard"
                     fallbackIcon={Server}
                     fallbackText="Device Dashboard"
