@@ -14,7 +14,8 @@ import {
   AlertCircle,
   RefreshCw,
   Package,
-  Router as RouterIcon
+  Router as RouterIcon,
+  Plus
 } from 'lucide-react';
 import { Table } from '../../components/ui/table';
 
@@ -22,8 +23,20 @@ export const HotspotPackages = () => {
   const [search, setSearch] = useState('');
   const [routerFilter, setRouterFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [formData, setFormData] = useState<PackageCreate>({
+    name: '',
+    download_speed: 0,
+    upload_speed: 0,
+    price: 0,
+    validity_value: 1,
+    validity_unit: 'days',
+    router_id: '',
+    package_type_id: '',
+  });
 
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
 
   const { data: packages = [], isLoading } = useQuery({
     queryKey: ['hotspot-packages'],
@@ -34,6 +47,108 @@ export const HotspotPackages = () => {
     queryKey: ['routers'],
     queryFn: routersApi.list,
   });
+
+  const { data: packageTypes = [] } = useQuery({
+    queryKey: ['package-types'],
+    queryFn: packagesApi.listTypes,
+  });
+
+  // Get hotspot package type ID
+  const hotspotPackageType = useMemo(() => {
+    return packageTypes.find((type) => type.name.toLowerCase() === 'hotspot');
+  }, [packageTypes]);
+
+  // Set hotspot package type when available
+  useEffect(() => {
+    if (hotspotPackageType && !formData.package_type_id) {
+      setFormData((prev) => ({ ...prev, package_type_id: hotspotPackageType.id }));
+    }
+  }, [hotspotPackageType, formData.package_type_id]);
+
+  const createMutation = useMutation({
+    mutationFn: packagesApi.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['hotspot-packages'] });
+      queryClient.invalidateQueries({ queryKey: ['packages'] });
+      setIsCreateOpen(false);
+      resetForm();
+      addToast({ title: 'Success', description: 'Hotspot package created successfully' });
+    },
+    onError: (error: any) => {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to create package',
+      });
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      download_speed: 0,
+      upload_speed: 0,
+      price: 0,
+      validity_value: 1,
+      validity_unit: 'days',
+      router_id: '',
+      package_type_id: hotspotPackageType?.id || '',
+    });
+  };
+
+  const handleCreate = () => {
+    // Validate required fields
+    if (!formData.name) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Package name is required',
+      });
+      return;
+    }
+    if (!formData.router_id) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select a router',
+      });
+      return;
+    }
+    if (!formData.package_type_id) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Package type is required',
+      });
+      return;
+    }
+    if (formData.download_speed <= 0 || formData.upload_speed <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Download and upload speeds must be greater than 0',
+      });
+      return;
+    }
+    if (formData.price <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Price must be greater than 0',
+      });
+      return;
+    }
+    if (formData.validity_value <= 0) {
+      addToast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Validity value must be greater than 0',
+      });
+      return;
+    }
+
+    createMutation.mutate(formData);
+  };
 
   // Filter and search packages
   const filteredPackages = useMemo(() => {
@@ -104,10 +219,16 @@ export const HotspotPackages = () => {
           <h1 className="text-3xl font-bold text-gray-900">Hotspot Packages</h1>
           <p className="text-gray-600 mt-1">Manage hotspot-specific service packages</p>
         </div>
-        <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['hotspot-packages'] })}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['hotspot-packages'] })} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+          <Button onClick={() => setIsCreateOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Package
+          </Button>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -322,6 +443,138 @@ export const HotspotPackages = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Create Package Dialog */}
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Create New Hotspot Package</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Package Name *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Hotspot Basic Plan"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="router_id">Router *</Label>
+              <Select
+                id="router_id"
+                value={formData.router_id}
+                onChange={(e) => setFormData({ ...formData, router_id: e.target.value })}
+              >
+                <option value="">Select a router...</option>
+                {routers.map((router) => (
+                  <option key={router.id} value={router.id}>
+                    {router.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="download_speed">Download Speed (Mbps) *</Label>
+                <Input
+                  id="download_speed"
+                  type="number"
+                  value={formData.download_speed}
+                  onChange={(e) =>
+                    setFormData({ ...formData, download_speed: parseInt(e.target.value) || 0 })
+                  }
+                  placeholder="e.g., 10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="upload_speed">Upload Speed (Mbps) *</Label>
+                <Input
+                  id="upload_speed"
+                  type="number"
+                  value={formData.upload_speed}
+                  onChange={(e) =>
+                    setFormData({ ...formData, upload_speed: parseInt(e.target.value) || 0 })
+                  }
+                  placeholder="e.g., 5"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Price (KES) *</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
+                }
+                placeholder="e.g., 500.00"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="validity_value">Validity Value *</Label>
+                <Input
+                  id="validity_value"
+                  type="number"
+                  value={formData.validity_value}
+                  onChange={(e) =>
+                    setFormData({ ...formData, validity_value: parseInt(e.target.value) || 1 })
+                  }
+                  placeholder="e.g., 1"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="validity_unit">Validity Unit *</Label>
+                <Select
+                  id="validity_unit"
+                  value={formData.validity_unit}
+                  onChange={(e) =>
+                    setFormData({ ...formData, validity_unit: e.target.value as 'minutes' | 'hours' | 'days' })
+                  }
+                >
+                  <option value="minutes">Minutes</option>
+                  <option value="hours">Hours</option>
+                  <option value="days">Days</option>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="data_limit_gb">Data Limit (GB) - Optional</Label>
+              <Input
+                id="data_limit_gb"
+                type="number"
+                value={formData.data_limit_gb || ''}
+                onChange={(e) =>
+                  setFormData({ 
+                    ...formData, 
+                    data_limit_gb: e.target.value ? parseInt(e.target.value) : undefined 
+                  })
+                }
+                placeholder="Leave empty for unlimited"
+              />
+            </div>
+            {hotspotPackageType && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  <strong>Package Type:</strong> {hotspotPackageType.name} (automatically selected)
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={createMutation.isPending}>
+              {createMutation.isPending ? 'Creating...' : 'Create Package'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
