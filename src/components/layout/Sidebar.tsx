@@ -10,6 +10,7 @@ import {
   LogOut,
   X,
   Sparkles,
+  Wifi,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../api/auth';
@@ -23,6 +24,10 @@ const menuItems = [
   { path: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
   { path: '/payments', label: 'Payments', icon: Receipt },
   { path: '/routers', label: 'Routers', icon: Router },
+];
+
+const externalLinks = [
+  { path: '/hotspot/login', label: 'Hotspot Portal', icon: Wifi, external: true },
 ];
 
 interface SidebarProps {
@@ -141,6 +146,57 @@ export const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 )}
               </Link>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="my-4 border-t border-white/10" />
+
+          {/* External Links */}
+          {externalLinks.map((item) => {
+            const Icon = item.icon;
+            return (
+              <a
+                key={item.path}
+                href={item.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onClose}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 relative group',
+                  'text-purple-100 hover:bg-white/10 hover:text-white hover:scale-[1.01]'
+                )}
+              >
+                {/* Icon Container */}
+                <div className={cn(
+                  "p-2 rounded-lg transition-all duration-300",
+                  "bg-white/5 group-hover:bg-white/10"
+                )}>
+                  <Icon className={cn(
+                    "h-5 w-5 transition-transform duration-300"
+                  )} />
+                </div>
+                
+                <span className="relative z-10 flex-1">{item.label}</span>
+                
+                {/* External Link Indicator */}
+                <svg
+                  className="h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+                
+                {/* Hover Effect */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </a>
             );
           })}
         </nav>
