@@ -1,11 +1,17 @@
-import { useState, useMemo } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState, useMemo, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hotspotAdminApi } from '../../api/hotspot';
 import { routersApi } from '../../api/routers';
+import { packagesApi } from '../../api/packages';
+import { PackageCreate, PackageType } from '../../api/types';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
+import { useToast } from '../../components/ui/toast';
 import { 
   Search, 
   Wifi, 
@@ -48,7 +54,7 @@ export const HotspotPackages = () => {
     queryFn: routersApi.list,
   });
 
-  const { data: packageTypes = [] } = useQuery({
+  const { data: packageTypes = [] } = useQuery<PackageType[]>({
     queryKey: ['package-types'],
     queryFn: packagesApi.listTypes,
   });
@@ -61,7 +67,7 @@ export const HotspotPackages = () => {
   // Set hotspot package type when available
   useEffect(() => {
     if (hotspotPackageType && !formData.package_type_id) {
-      setFormData((prev) => ({ ...prev, package_type_id: hotspotPackageType.id }));
+      setFormData((prev: PackageCreate) => ({ ...prev, package_type_id: hotspotPackageType.id }));
     }
   }, [hotspotPackageType, formData.package_type_id]);
 
@@ -465,7 +471,7 @@ export const HotspotPackages = () => {
               <Select
                 id="router_id"
                 value={formData.router_id}
-                onChange={(e) => setFormData({ ...formData, router_id: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, router_id: e.target.value })}
               >
                 <option value="">Select a router...</option>
                 {routers.map((router) => (
@@ -532,7 +538,7 @@ export const HotspotPackages = () => {
                 <Select
                   id="validity_unit"
                   value={formData.validity_unit}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                     setFormData({ ...formData, validity_unit: e.target.value as 'minutes' | 'hours' | 'days' })
                   }
                 >
