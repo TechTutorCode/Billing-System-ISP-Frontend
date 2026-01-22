@@ -14,6 +14,7 @@ import { LoginPage } from './features/hotspot/LoginPage';
 import { ConnectedPage } from './features/hotspot/components/ConnectedPage';
 import { HotspotUsers } from './features/hotspot/HotspotUsers';
 import { HotspotPackages } from './features/hotspot/HotspotPackages';
+import { LandingPage } from './pages/LandingPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,12 +31,17 @@ function App() {
       <ToastProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<Login />} />
+            {/* Landing Page - Public */}
+            <Route path="/" element={<LandingPage />} />
+            
             {/* Hotspot Portal Routes - Public Access */}
             <Route path="/hotspot/login" element={<LoginPage />} />
             <Route path="/hotspot/connected" element={<ConnectedPage />} />
+            
+            {/* Dashboard Routes - Protected */}
+            <Route path="/dashboard/login" element={<Login />} />
             <Route
-              path="/"
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -45,7 +51,7 @@ function App() {
               }
             />
             <Route
-              path="/customers"
+              path="/dashboard/customers"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -55,7 +61,7 @@ function App() {
               }
             />
             <Route
-              path="/packages"
+              path="/dashboard/packages"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -65,7 +71,7 @@ function App() {
               }
             />
             <Route
-              path="/subscriptions"
+              path="/dashboard/subscriptions"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -75,7 +81,7 @@ function App() {
               }
             />
             <Route
-              path="/payments"
+              path="/dashboard/payments"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -85,7 +91,7 @@ function App() {
               }
             />
             <Route
-              path="/routers"
+              path="/dashboard/routers"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -95,7 +101,7 @@ function App() {
               }
             />
             <Route
-              path="/hotspot/users"
+              path="/dashboard/hotspot/users"
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -105,7 +111,7 @@ function App() {
               }
             />
             <Route
-              path="/hotspot/packages"
+              path="/dashboard/hotspot/packages"
               element={
                 <ProtectedRoute>
                   <MainLayout>

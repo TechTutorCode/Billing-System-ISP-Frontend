@@ -20,17 +20,17 @@ import { useToast } from '../ui/toast';
 import { cn } from '../../utils/cn';
 
 const menuItems = [
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/customers', label: 'Customers', icon: Users },
-  { path: '/packages', label: 'Packages', icon: Package },
-  { path: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
-  { path: '/payments', label: 'Payments', icon: Receipt },
-  { path: '/routers', label: 'Routers', icon: Router },
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/dashboard/customers', label: 'Customers', icon: Users },
+  { path: '/dashboard/packages', label: 'Packages', icon: Package },
+  { path: '/dashboard/subscriptions', label: 'Subscriptions', icon: CreditCard },
+  { path: '/dashboard/payments', label: 'Payments', icon: Receipt },
+  { path: '/dashboard/routers', label: 'Routers', icon: Router },
 ];
 
 const hotspotMenuItems = [
-  { path: '/hotspot/packages', label: 'Packages', icon: Package },
-  { path: '/hotspot/users', label: 'Users', icon: UserCheck },
+  { path: '/dashboard/hotspot/packages', label: 'Packages', icon: Package },
+  { path: '/dashboard/hotspot/users', label: 'Users', icon: UserCheck },
 ];
 
 const externalLinks = [
@@ -49,7 +49,7 @@ export const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const [hotspotMenuOpen, setHotspotMenuOpen] = useState(false);
 
   // Check if any hotspot route is active
-  const isHotspotActive = location.pathname.startsWith('/hotspot/');
+  const isHotspotActive = location.pathname.startsWith('/dashboard/hotspot/');
 
   // Auto-expand hotspot menu if on a hotspot page
   useEffect(() => {
@@ -68,7 +68,7 @@ export const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
     try {
       await authApi.logout(true);
       clearTokens();
-      window.location.href = '/login';
+      window.location.href = '/dashboard/login';
     } catch (error) {
       addToast({
         variant: 'destructive',

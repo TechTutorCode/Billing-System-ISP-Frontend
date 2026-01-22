@@ -11,7 +11,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   // Check both store and localStorage for token
   if (!isAuthenticated && !token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/dashboard/login" replace />;
   }
 
   return <>{children}</>;
