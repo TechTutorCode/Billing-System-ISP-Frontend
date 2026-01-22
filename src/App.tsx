@@ -12,6 +12,8 @@ import { Payments } from './features/payments/Payments';
 import { Routers } from './features/routers/Routers';
 import { LoginPage } from './features/hotspot/LoginPage';
 import { ConnectedPage } from './features/hotspot/components/ConnectedPage';
+import { HotspotUsers } from './features/hotspot/HotspotUsers';
+import { HotspotPackages } from './features/hotspot/HotspotPackages';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +90,26 @@ function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <Routers />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/hotspot/users"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <HotspotUsers />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/hotspot/packages"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <HotspotPackages />
                   </MainLayout>
                 </ProtectedRoute>
               }

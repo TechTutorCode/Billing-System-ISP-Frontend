@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiClient from './client';
 
 // Hotspot-specific types
 export interface HotspotPackage {
@@ -47,6 +48,28 @@ export interface SessionInfo {
   expires_at: string;
   download_speed: number;
   upload_speed: number;
+}
+
+// Admin view types for hotspot management
+export interface HotspotUser {
+  id: string;
+  mac_address: string;
+  username: string;
+  package_id: string;
+  package_name?: string;
+  expires_at: string;
+  created_at: string;
+  status: 'active' | 'expired' | 'suspended';
+}
+
+export interface HotspotPackageAdmin extends HotspotPackage {
+  router_id: string;
+  router_name?: string;
+  package_type_id: string;
+  mikrotik_synced: boolean;
+  mikrotik_synced_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // Create a separate client for hotspot portal (no auth required)
@@ -99,5 +122,31 @@ export const hotspotApi = {
     } catch (error) {
       return null;
     }
+  },
+};
+
+// Admin API methods (require authentication)
+export const hotspotAdminApi = {
+  // Get all hotspot packages (admin view with router info)
+  getHotspotPackages: async (): Promise<HotspotPackageAdmin[]> => {
+    const response = await apiClient.get<HotspotPackageAdmin[]>('/api/packages/hotspot');
+    return response.data;
+  },
+
+  // Get all hotspot users/vouchers
+  getHotspotUsers: async (): Promise<HotspotUser[]> => {
+    const response = await apiClient.get<HotspotUser[]>('/api/hotspot/users');
+    return response.data;
+  },
+
+  // Get hotspot user by ID
+  getHotspotUser: async (id: string): Promise<HotspotUser> => {
+    const response = await apiClient.get<HotspotUser>(`/api/hotspot/users/${id}`);
+    return response.data;
+  },
+
+  // Delete/revoke hotspot user
+  deleteHotspotUser: async (id: string): Promise<void> => {
+    await apiClient.delete(`/api/hotspot/users/${id}`);
   },
 };

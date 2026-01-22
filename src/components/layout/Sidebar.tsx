@@ -11,6 +11,7 @@ import {
   X,
   Sparkles,
   Wifi,
+  UserCheck,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../api/auth';
@@ -24,6 +25,8 @@ const menuItems = [
   { path: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
   { path: '/payments', label: 'Payments', icon: Receipt },
   { path: '/routers', label: 'Routers', icon: Router },
+  { path: '/hotspot/packages', label: 'Hotspot Packages', icon: Wifi },
+  { path: '/hotspot/users', label: 'Hotspot Users', icon: UserCheck },
 ];
 
 const externalLinks = [
