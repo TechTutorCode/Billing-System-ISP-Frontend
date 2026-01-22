@@ -137,10 +137,14 @@ export const HotspotPackages = () => {
     if (search) {
       const searchLower = search.toLowerCase();
       filtered = filtered.filter(
-        (pkg) =>
-          pkg.name.toLowerCase().includes(searchLower) ||
-          pkg.router_name?.toLowerCase().includes(searchLower) ||
-          pkg.mikrotik_profile_name?.toLowerCase().includes(searchLower)
+        (pkg) => {
+          const routerName = routers.find((r) => r.id === pkg.router_id)?.name?.toLowerCase() || '';
+          return (
+            pkg.name.toLowerCase().includes(searchLower) ||
+            routerName.includes(searchLower) ||
+            pkg.mikrotik_profile_name?.toLowerCase().includes(searchLower)
+          );
+        }
       );
     }
 
