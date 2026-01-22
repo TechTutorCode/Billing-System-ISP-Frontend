@@ -30,12 +30,16 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-slate-800 dark:bg-gray-950 dark:text-white text-sm font-poppins antialiased;
   }
   
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
+  }
+
+  button {
+    @apply cursor-pointer;
   }
 }
 
@@ -169,30 +173,36 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+}
 
-  /* Custom scrollbar */
+@layer components {
+  .btn-primary {
+    @apply bg-saas-primary hover:bg-saas-primaryDark text-white text-sm font-semibold py-2.5 px-5 rounded-lg transition-all duration-200;
+  }
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .card-shadow {
+    @apply shadow-[0_8px_30px_rgb(0,0,0,0.12)];
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-saas-primary to-saas-primaryDark bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
-
   ::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
   }
-
   ::-webkit-scrollbar-thumb {
     background: #c1c1c1;
     border-radius: 10px;
   }
-
   ::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
   }

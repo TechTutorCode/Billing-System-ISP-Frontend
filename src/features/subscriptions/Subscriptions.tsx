@@ -276,10 +276,10 @@ export const Subscriptions = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-2">To Expire Today</p>
-                  <p className="text-3xl font-bold text-orange-600">{analytics.expiringToday}</p>
+                  <p className="text-3xl font-bold text-saas-primary">{analytics.expiringToday}</p>
                 </div>
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <Clock className="h-6 w-6 text-orange-600" />
+                <div className="bg-saas-primary/10 p-4 rounded-lg">
+                  <Clock className="h-6 w-6 text-saas-primary" />
                 </div>
               </div>
             </CardContent>

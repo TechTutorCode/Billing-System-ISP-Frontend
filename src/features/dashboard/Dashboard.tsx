@@ -44,8 +44,8 @@ export const Dashboard = () => {
       title: 'Active Routers',
       value: stats?.active_routers || 0,
       icon: Router,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      color: 'text-saas-primary',
+      bgColor: 'bg-saas-primary/10',
       link: '/routers',
     },
   ];

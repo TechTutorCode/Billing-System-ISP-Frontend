@@ -348,8 +348,8 @@ export const Packages = () => {
                     {isLoading ? '...' : stats.notSynced}
                   </p>
                 </div>
-                <div className="bg-orange-50 p-3 rounded-lg">
-                  <XCircle className="h-6 w-6 text-orange-600" />
+                <div className="bg-saas-primary/10 p-3 rounded-lg">
+                  <XCircle className="h-6 w-6 text-saas-primary" />
                 </div>
               </div>
             </CardContent>

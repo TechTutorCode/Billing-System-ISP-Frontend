@@ -133,10 +133,10 @@ export const ConnectedPage: React.FC = () => {
                 {timeRemaining && (
                   <div className="flex items-center justify-between py-2">
                     <div className="flex items-center space-x-2">
-                      <Clock className="h-5 w-5 text-orange-600" />
+                      <Clock className="h-5 w-5 text-saas-primary" />
                       <span className="text-gray-700">Time Remaining:</span>
                     </div>
-                    <span className="font-bold text-orange-600 text-lg">
+                    <span className="font-bold text-saas-primary text-lg">
                       {timeRemaining}
                     </span>
                   </div>
