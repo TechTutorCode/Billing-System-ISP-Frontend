@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -12,6 +12,8 @@ import {
   Sparkles,
   Wifi,
   UserCheck,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../api/auth';
@@ -25,8 +27,11 @@ const menuItems = [
   { path: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
   { path: '/payments', label: 'Payments', icon: Receipt },
   { path: '/routers', label: 'Routers', icon: Router },
-  { path: '/hotspot/packages', label: 'Hotspot Packages', icon: Wifi },
-  { path: '/hotspot/users', label: 'Hotspot Users', icon: UserCheck },
+];
+
+const hotspotMenuItems = [
+  { path: '/hotspot/packages', label: 'Packages', icon: Package },
+  { path: '/hotspot/users', label: 'Users', icon: UserCheck },
 ];
 
 const externalLinks = [
@@ -42,6 +47,17 @@ export const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const location = useLocation();
   const { clearTokens } = useAuthStore();
   const { addToast } = useToast();
+  const [hotspotMenuOpen, setHotspotMenuOpen] = useState(false);
+
+  // Check if any hotspot route is active
+  const isHotspotActive = location.pathname.startsWith('/hotspot/');
+
+  // Auto-expand hotspot menu if on a hotspot page
+  useEffect(() => {
+    if (isHotspotActive) {
+      setHotspotMenuOpen(true);
+    }
+  }, [isHotspotActive]);
 
   useEffect(() => {
     if (isOpen) {
@@ -151,6 +167,92 @@ export const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
               </Link>
             );
           })}
+
+          {/* Hotspots Dropdown */}
+          <div className="space-y-1">
+            <button
+              onClick={() => setHotspotMenuOpen(!hotspotMenuOpen)}
+              className={cn(
+                'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 relative group',
+                isHotspotActive
+                  ? 'bg-gradient-to-r from-blue-500/90 to-purple-500/90 text-white shadow-lg shadow-purple-500/50 scale-[1.02]'
+                  : 'text-purple-100 hover:bg-white/10 hover:text-white hover:scale-[1.01]'
+              )}
+            >
+              {/* Active Indicator */}
+              {isHotspotActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full" />
+              )}
+              
+              {/* Icon Container */}
+              <div className={cn(
+                "p-2 rounded-lg transition-all duration-300",
+                isHotspotActive 
+                  ? "bg-white/20 shadow-md" 
+                  : "bg-white/5 group-hover:bg-white/10"
+              )}>
+                <Wifi className={cn(
+                  "h-5 w-5 transition-transform duration-300",
+                  isHotspotActive && "scale-110"
+                )} />
+              </div>
+              
+              <span className="relative z-10 flex-1 text-left">Hotspots</span>
+              
+              {/* Chevron Icon */}
+              <div className={cn(
+                "transition-transform duration-300",
+                hotspotMenuOpen && "rotate-90"
+              )}>
+                <ChevronRight className="h-4 w-4" />
+              </div>
+              
+              {/* Hover Effect */}
+              {!isHotspotActive && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              )}
+            </button>
+
+            {/* Submenu */}
+            {hotspotMenuOpen && (
+              <div className="ml-4 space-y-1 pl-4 border-l-2 border-white/10">
+                {hotspotMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={onClose}
+                      className={cn(
+                        'flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 relative group',
+                        isActive
+                          ? 'bg-gradient-to-r from-blue-500/80 to-purple-500/80 text-white shadow-md'
+                          : 'text-purple-200 hover:bg-white/10 hover:text-white'
+                      )}
+                    >
+                      {/* Active Indicator */}
+                      {isActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
+                      )}
+                      
+                      {/* Icon Container */}
+                      <div className={cn(
+                        "p-1.5 rounded-md transition-all duration-300",
+                        isActive 
+                          ? "bg-white/20" 
+                          : "bg-white/5 group-hover:bg-white/10"
+                      )}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      
+                      <span className="relative z-10 flex-1">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Divider */}
           <div className="my-4 border-t border-white/10" />
