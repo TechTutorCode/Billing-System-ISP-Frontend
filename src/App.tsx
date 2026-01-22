@@ -10,6 +10,8 @@ import { Packages } from './features/packages/Packages';
 import { Subscriptions } from './features/subscriptions/Subscriptions';
 import { Payments } from './features/payments/Payments';
 import { Routers } from './features/routers/Routers';
+import { LoginPage } from './features/hotspot/LoginPage';
+import { ConnectedPage } from './features/hotspot/components/ConnectedPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +29,9 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            {/* Hotspot Portal Routes - Public Access */}
+            <Route path="/hotspot/login" element={<LoginPage />} />
+            <Route path="/hotspot/connected" element={<ConnectedPage />} />
             <Route
               path="/"
               element={
