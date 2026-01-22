@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { hotspotAdminApi, HotspotPackageAdmin } from '../../api/hotspot';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { hotspotAdminApi } from '../../api/hotspot';
 import { routersApi } from '../../api/routers';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { useToast } from '../../components/ui/toast';
 import { 
   Search, 
   Wifi, 
@@ -25,7 +24,6 @@ export const HotspotPackages = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   const queryClient = useQueryClient();
-  const { addToast } = useToast();
 
   const { data: packages = [], isLoading } = useQuery({
     queryKey: ['hotspot-packages'],
